@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "handle": "registration",
+      "name": "Registration Fee",
+      "description": "Required attendee registration.",
+      "price_cents": 3500
+    },
+    {
+      "handle": "directory",
+      "name": "Printed Directory",
+      "description": "Official session directory.",
+      "price_cents": 1500
+    },
+    {
+      "handle": "supreme-pin",
+      "name": "Supreme Session Lapel Pin",
+      "description": "Enamel pin for 2027 session.",
+      "price_cents": 1200
+    },
+    {
+      "handle": "silk-scarf",
+      "name": "Silk Scarf",
+      "description": "Lightweight scarf with emblem pattern.",
+      "price_cents": 2500
+    },
+    {
+      "handle": "tumbler-20oz",
+      "name": "20oz Tumbler",
+      "description": "Insulated stainless tumbler.",
+      "price_cents": 1800
+    },
+    {
+      "handle": "lanyard-crest",
+      "name": "Crest Lanyard",
+      "description": "Woven lanyard with clasp.",
+      "price_cents": 800
+    }
+  ]
+}

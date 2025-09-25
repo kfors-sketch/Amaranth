@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head>    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Linda Forsberg • Handmade Shop">
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <title>Linda Forsberg • Handmade Shop</title>
+</head><body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/linda/"><img src="/assets/img/logo.svg" alt="logo"><span>Linda Forsberg • Handmade Shop</span></a>
+    <nav id="nav" class="nav"><a href="/linda/">Home</a><a href="/linda/shop.html">Shop</a><a href="/linda/order.html">Order</a></nav>
+    <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+  </div>
+</header>
+<main class="container mt-lg">
+  <h1>Order</h1>
+  <section class="card">
+    <h2>Purchaser</h2>
+    <div class="grid-2"><label>Full name<input id="p_name" type="text" required></label><label>Title (optional)<input id="p_title" type="text"></label></div>
+    <div class="grid-2"><label>Email<input id="p_email" type="email" required></label><label>Phone<input id="p_phone" type="tel" required></label></div>
+    <div class="grid-3"><label>Address line 1<input id="p_addr1" type="text" required></label><label>Address line 2<input id="p_addr2" type="text"></label><label>City<input id="p_city" type="text" required></label></div>
+    <div class="grid-3"><label>State/Province<input id="p_state" type="text" required></label><label>Postal code<input id="p_zip" type="text" required></label><label>Country<input id="p_country" type="text" value="US" required></label></div>
+  </section>
+  <section class="card mt-lg"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>Attendees</h2><button class="btn" id="add-attendee">+ Add attendee</button></div><div id="attendee-list"></div></section>
+  <section class="card mt-lg"><h2>Add Items (Registration, Directory, Shop)</h2><div id="store-list" class="grid-3"></div></section>
+  <section class="card mt-lg"><h2>Extra Donation (optional)</h2><div id="extra-donation"></div></section>
+  <section class="card mt-lg"><div style="display:flex;justify-content:space-between;align-items:center;"><h2>Summary</h2><div><strong>Total: </strong><span id="order-total">$0.00</span></div></div><button id="checkout" class="btn btn-primary mt">Go to Checkout</button><p class="tiny">You’ll be redirected to Stripe’s secure checkout.</p></section>
+</main>
+<script src="/assets/js/render-multi.js" defer></script><script src="/assets/js/main.js" defer></script></body></html>

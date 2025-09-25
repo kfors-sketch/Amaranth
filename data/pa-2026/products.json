@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "handle": "registration",
+      "name": "Registration Fee",
+      "description": "Required attendee registration.",
+      "price_cents": 3000
+    },
+    {
+      "handle": "directory",
+      "name": "Printed Directory",
+      "description": "Official session directory.",
+      "price_cents": 1500
+    },
+    {
+      "handle": "lapel-pin-rose",
+      "name": "Rose Lapel Pin",
+      "description": "Enamel pin.",
+      "price_cents": 1200
+    },
+    {
+      "handle": "tote-classic",
+      "name": "Classic Tote Bag",
+      "description": "Canvas tote with emblem.",
+      "price_cents": 2200
+    },
+    {
+      "handle": "notebook-crest",
+      "name": "Crest Notebook",
+      "description": "A5 lined notebook.",
+      "price_cents": 1400
+    }
+  ]
+}

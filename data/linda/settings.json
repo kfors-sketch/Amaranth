@@ -1,0 +1,17 @@
+{
+  "org_name": "Linda Forsberg \u2022 Handmade Shop",
+  "contact_email": "hello@example.com",
+  "contact_phone": "(555) 123-4567",
+  "directory": {
+    "blurb": "Purchase the official directory via the Order page."
+  },
+  "surcharge": {
+    "enabled": true,
+    "fee_percent": 0.029,
+    "fee_fixed_cents": 30,
+    "cap_percent": 0.03
+  },
+  "donations": {
+    "allow_extra_on_order": false
+  }
+}

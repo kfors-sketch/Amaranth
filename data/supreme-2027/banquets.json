@@ -1,0 +1,128 @@
+{
+  "events": [
+    {
+      "id": "banquet-1",
+      "title": "Banquet 1",
+      "datetime_iso": "2027-04-18T17:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Formal dinner with program.",
+      "meals": [
+        {
+          "code": "CHICKEN",
+          "label": "Chicken Entr\u00e9e"
+        },
+        {
+          "code": "BEEF",
+          "label": "Beef Entr\u00e9e"
+        },
+        {
+          "code": "VEG",
+          "label": "Vegetarian"
+        }
+      ],
+      "tickets": [
+        {
+          "handle": "banquet1",
+          "label": "General Admission",
+          "price_cents": 3500
+        }
+      ]
+    },
+    {
+      "id": "banquet-2",
+      "title": "Banquet 2",
+      "datetime_iso": "2027-04-19T09:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Breakfast banquet.",
+      "meals": [
+        {
+          "code": "OMELET",
+          "label": "Omelet Plate"
+        },
+        {
+          "code": "PANCAKE",
+          "label": "Pancakes & Fruit"
+        },
+        {
+          "code": "VEG",
+          "label": "Vegetarian Plate"
+        }
+      ],
+      "tickets": [
+        {
+          "handle": "banquet2",
+          "label": "General Admission",
+          "price_cents": 4000
+        }
+      ]
+    },
+    {
+      "id": "banquet-3",
+      "title": "Banquet 3",
+      "datetime_iso": "2027-04-20T13:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Luncheon.",
+      "meals": [
+        {
+          "code": "CHICKEN",
+          "label": "Chicken Entr\u00e9e"
+        },
+        {
+          "code": "VEG",
+          "label": "Vegetarian"
+        }
+      ],
+      "tickets": [
+        {
+          "handle": "banquet3",
+          "label": "General Admission",
+          "price_cents": 4500
+        }
+      ]
+    },
+    {
+      "id": "banquet-4",
+      "title": "Banquet 4",
+      "datetime_iso": "2027-04-20T17:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Evening dinner.",
+      "meals": [
+        {
+          "code": "BEEF",
+          "label": "Beef Entr\u00e9e"
+        },
+        {
+          "code": "VEG",
+          "label": "Vegetarian"
+        }
+      ],
+      "tickets": [
+        {
+          "handle": "banquet4",
+          "label": "General Admission",
+          "price_cents": 5000
+        }
+      ]
+    },
+    {
+      "id": "banquet-5",
+      "title": "Banquet 5",
+      "datetime_iso": "2027-04-21T13:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Buffet service.",
+      "meals": [
+        {
+          "code": "BUFFET",
+          "label": "Buffet (no selection)"
+        }
+      ],
+      "tickets": [
+        {
+          "handle": "banquet5",
+          "label": "General Admission",
+          "price_cents": 5500
+        }
+      ]
+    }
+  ]
+}

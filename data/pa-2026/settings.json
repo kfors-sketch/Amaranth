@@ -1,0 +1,26 @@
+{
+  "org_name": "2026 Grand Court of Pennsylvania \u2022 Order of the Amaranth \u2022 Annual Session",
+  "contact_email": "hello@example.com",
+  "contact_phone": "(555) 123-4567",
+  "directory": {
+    "blurb": "Purchase the official directory via the Order page."
+  },
+  "surcharge": {
+    "enabled": true,
+    "fee_percent": 0.029,
+    "fee_fixed_cents": 30,
+    "cap_percent": 0.03
+  },
+  "donations": {
+    "purpose_text": "Support programs and session activities.",
+    "suggested": [
+      25,
+      50,
+      100,
+      250
+    ],
+    "default_amount": 50,
+    "allow_extra_on_order": true,
+    "surcharge_donations": false
+  }
+}
