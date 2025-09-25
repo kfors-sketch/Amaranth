@@ -1,42 +1,52 @@
-import Stripe from 'stripe';
+// /api/report.js (CommonJS)
+const Stripe = require('stripe');
 
-export default async function handler(req, res){
-  try{
-    if(req.method !== 'GET') return res.status(405).json({error:'Method not allowed'});
+module.exports = async (req, res) => {
+  try {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
     const token = req.query.token || '';
-    if(!process.env.REPORT_TOKEN || token !== process.env.REPORT_TOKEN){
-      return res.status(401).json({error:'Unauthorized'});
+    if (!process.env.REPORT_TOKEN || token !== process.env.REPORT_TOKEN) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
-    const org = req.query.org || '';
-    const from = req.query.from; const to = req.query.to;
-    if(!org || !from || !to) return res.status(400).json({error:'Missing org/from/to'});
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
-    const fromTs = Math.floor(new Date(from + 'T00:00:00Z').getTime()/1000);
-    const toTs = Math.floor(new Date(to + 'T23:59:59Z').getTime()/1000);
+    const org = req.query.org || '';
+    const from = req.query.from;
+    const to = req.query.to;
+    if (!org || !from || !to) return res.status(400).json({ error: 'Missing org/from/to' });
+
+    if (!process.env.STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe key not configured' });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+
+    const fromTs = Math.floor(new Date(from + 'T00:00:00Z').getTime() / 1000);
+    const toTs = Math.floor(new Date(to + 'T23:59:59Z').getTime() / 1000);
 
     const sessions = [];
     let params = { limit: 100, created: { gte: fromTs, lte: toTs }, expand: ['data.line_items', 'data.payment_intent'] };
-    while (true){
+    while (true) {
       const page = await stripe.checkout.sessions.list(params);
       sessions.push(...page.data);
-      if(!page.has_more) break;
-      params.starting_after = page.data[page.data.length-1].id;
+      if (!page.has_more) break;
+      params.starting_after = page.data[page.data.length - 1].id;
     }
 
     const rows = [];
     rows.push(['created','org','session_id','purchaser_name','purchaser_email','item_name','quantity','unit_amount_cents','amount_total_cents','attendees_json']);
-    for (const s of sessions){
+    for (const s of sessions) {
       const pi = s.payment_intent;
       const meta = (pi && pi.metadata) ? pi.metadata : {};
       if (org && meta.org !== org) continue;
       const purchaser_name = meta.purchaser_name || '';
       const purchaser_email = meta.purchaser_email || '';
-      const attendees_json = (meta.attendees_json || '').replace(/\\n/g,' ').slice(0, 4000);
+      const attendees_json = (meta.attendees_json || '').replace(/\n/g,' ').slice(0, 4000);
       const items = (s.line_items && s.line_items.data) ? s.line_items.data : [];
-      for (const li of items){
+      for (const li of items) {
         rows.push([
-          String(s.created), meta.org || '', s.id, purchaser_name, purchaser_email,
+          String(s.created),
+          meta.org || '',
+          s.id,
+          purchaser_name,
+          purchaser_email,
           li.description || (li.price && li.price.nickname) || (li.price && li.price.product) || '',
           String(li.quantity || 1),
           String((li.price && (li.price.unit_amount ?? li.amount_subtotal)) ?? 0),
@@ -45,12 +55,13 @@ export default async function handler(req, res){
         ]);
       }
     }
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\\n');
+
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename="report_${org}_${from}_to_${to}.csv"`);
     return res.status(200).send(csv);
-  }catch(e){
+  } catch (e) {
     console.error(e);
-    return res.status(500).json({error:'Failed to generate report'});
+    return res.status(500).json({ error: 'Failed to generate report' });
   }
-}
+};
