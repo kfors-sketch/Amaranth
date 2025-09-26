@@ -5,6 +5,14 @@ const path = require('path');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
 
+// 👇 Add this helper just after the require/stripe init
+const getBaseUrl = (req) => {
+  if (process.env.PUBLIC_URL) return process.env.PUBLIC_URL.replace(/\/$/, '');
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = req.headers['x-forwarded-proto'] || 'https';
+  return `${proto}://${host}`;
+};
+
 function loadJSON(org, name) {
   const p = path.join(process.cwd(), 'data', org, name + '.json');
   return JSON.parse(fs.readFileSync(p, 'utf-8'));
@@ -94,8 +102,8 @@ module.exports = async (req, res) => {
       mode: 'payment',
       customer: customer.id,
       line_items,
-      success_url: process.env.SUCCESS_URL || '/success.html',
-      cancel_url: process.env.CANCEL_URL || '/cancel.html',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       automatic_tax: { enabled: true },
       payment_intent_data: { metadata }
     });
