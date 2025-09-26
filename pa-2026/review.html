@@ -9,10 +9,12 @@
   <a class="logo" href="/pa-2026/"><img src="/assets/img/logo.svg" alt="logo"><span>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</span></a>
   <nav class="nav"><a href="/pa-2026/">Home</a><a href="/pa-2026/banquets.html">Banquets</a><a href="/pa-2026/registration.html">Registration</a><a href="/pa-2026/directory.html">Directory</a><a href="/pa-2026/shop.html">Store</a><a href="/pa-2026/order.html">Order</a><a href="/pa-2026/review.html">Review</a></nav>
 </div></header>
-<main class="container section">
-  <div class="notice">Registration and Directory are added on the Order/Store pages and show up in Review.</div>
-  <h1>Registration</h1>
-  <p>Registration is available as an item on the Store page or Order summary.</p>
+<main class="container section" data-page="review" id="review-root">
+  <div class="notice">Need to make changes? Go back to <a id="back-order" href="#">Order</a> or visit the <a id="to-store" href="#">Store</a>.</div>
+  <h1>Review Your Order</h1>
+  <div id="review-lines"></div>
+  <section class="card mt"><strong>Total:</strong> <span id="review-total">$0.00</span></section>
+  <p><button id="pay" class="btn btn-primary">Confirm & Pay</button></p>
 </main>
 <footer><div class="container tiny">© 2025</div></footer>
 <script src="/assets/js/app.js" defer></script>

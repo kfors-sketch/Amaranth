@@ -1,22 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="/assets/css/styles.css"><title>Admin • Multi-Group</title></head>
-<body><header class="site-header"><div class="container header-inner"><a class="logo" href="/"><img src="/assets/img/logo.svg" alt="logo"><span>Admin</span></a></div></header>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/css/styles.css"><title>Admin</title>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+</head><body id="watermark">
 <main class="container mt-lg">
   <h1>Admin</h1>
-  <label>Choose group
-    <select id="org">
-      <option value="pa-2026">PA 2026</option>
-      <option value="supreme-2027">Supreme 2027</option>
-      <option value="linda">Linda</option>
-    </select>
-  </label>
-  <div class="grid-3 mt-lg">
-    <section class="card"><h3>Settings</h3><textarea id="settings" rows="18"></textarea><button class="btn mt" onclick="download('settings.json', settings.value)">Download JSON</button></section>
-    <section class="card"><h3>Banquets</h3><textarea id="banquets" rows="18"></textarea><button class="btn mt" onclick="download('banquets.json', banquets.value)">Download JSON</button></section>
-    <section class="card"><h3>Products</h3><textarea id="products" rows="18"></textarea><button class="btn mt" onclick="download('products.json', products.value)">Download JSON</button></section>
-  </div>
-  <section class="card mt-lg">
+  <section class="card">
     <h2>Reports</h2>
-    <p>Download CSV from Stripe by group and date range. Requires env <code>REPORT_TOKEN</code> in Vercel.</p>
     <div class="grid-3">
       <label>Group<select id="r_org"><option value="pa-2026">PA 2026</option><option value="supreme-2027">Supreme 2027</option><option value="linda">Linda</option></select></label>
       <label>From<input id="r_from" type="date"></label>
@@ -24,20 +14,19 @@
     </div>
     <div class="grid-2">
       <label>Report token<input id="r_token" type="password" placeholder="REPORT_TOKEN"></label>
-      <div><button class="btn" id="r_download">Download CSV</button></div>
+      <div><button class="btn" id="csv">Download CSV</button> <button class="btn" id="xlsx">Download XLSX</button></div>
     </div>
   </section>
 </main>
 <script>
-async function load(id, url){const el=document.getElementById(id); try{const r=await fetch(url,{cache:'no-store'}); el.value=JSON.stringify(await r.json(), null, 2);}catch(e){el.value='// Could not load '+url;}}
-function download(filename, text){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'application/json'})); a.download=filename; a.click();}
-async function refresh(){const org=document.getElementById('org').value; await load('settings','/data/'+org+'/settings.json'); await load('banquets','/data/'+org+'/banquets.json'); await load('products','/data/'+org+'/products.json');}
-document.getElementById('org').addEventListener('change', refresh); refresh();
-document.getElementById('r_download').addEventListener('click', ()=>{
-  const org=document.getElementById('r_org').value; const from=document.getElementById('r_from').value; const to=document.getElementById('r_to').value; const token=document.getElementById('r_token').value;
-  if(!org||!from||!to||!token){alert('Please fill all report fields.'); return;}
-  const url='/api/report?org='+encodeURIComponent(org)+'&from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to)+'&token='+encodeURIComponent(token);
-  window.location.href=url;
+function buildUrl(fmt){const org=r_org.value, from=r_from.value, to=r_to.value, token=r_token.value; if(!org||!from||!to||!token){alert('Fill all fields'); return null;} return `/api/report?org=${encodeURIComponent(org)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&token=${encodeURIComponent(token)}`;}
+csv.addEventListener('click',()=>{const u=buildUrl('csv'); if(!u) return; window.location.href=u;});
+xlsx.addEventListener('click',async()=>{
+  const u=buildUrl('xlsx'); if(!u) return;
+  const r=await fetch(u); const text=await r.text();
+  const rows=text.trim().split(/\r?\n/).map(line=>line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(s=>s.replace(/^"|"$/g,'').replace(/""/g,'"')));
+  const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+  XLSX.writeFile(wb, `report_${r_org.value}_${r_from.value}_to_${r_to.value}.xlsx`);
 });
 </script>
 </body></html>

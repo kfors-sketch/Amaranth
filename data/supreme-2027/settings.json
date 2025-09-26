@@ -1,9 +1,9 @@
 {
-  "org_name": "2027 Supreme Council \u2022 Order of the Amaranth \u2022 Annual Session",
+  "org_name": "Supreme 2027",
   "contact_email": "hello@example.com",
   "contact_phone": "(555) 123-4567",
   "directory": {
-    "blurb": "Purchase the official directory via the Order page."
+    "blurb": "Purchase the official directory via the Store or Order pages."
   },
   "surcharge": {
     "enabled": true,
@@ -19,7 +19,7 @@
       100,
       250
     ],
-    "default_amount": 50,
+    "default_amount": 0,
     "allow_extra_on_order": true,
     "surcharge_donations": false
   }

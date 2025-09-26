@@ -21,20 +21,8 @@
     {
       "handle": "silk-scarf",
       "name": "Silk Scarf",
-      "description": "Lightweight scarf with emblem pattern.",
+      "description": "Lightweight scarf.",
       "price_cents": 2500
-    },
-    {
-      "handle": "tumbler-20oz",
-      "name": "20oz Tumbler",
-      "description": "Insulated stainless tumbler.",
-      "price_cents": 1800
-    },
-    {
-      "handle": "lanyard-crest",
-      "name": "Crest Lanyard",
-      "description": "Woven lanyard with clasp.",
-      "price_cents": 800
     }
   ]
 }
