@@ -123,6 +123,62 @@
           "price_cents": 5500
         }
       ]
+    },
+    {
+      "id": "banquet-6",
+      "title": "Banquet 6",
+      "datetime_iso": "2026-04-21T17:00:00-04:00",
+      "venue": "Venue TBD",
+      "description": "Evening reception with program.",
+      "meal_required": true,
+      "meals": [
+    { 
+       "code": "CHICKEN",
+       "label": "Chicken Entrée" 
+    },
+    {
+       "code": "VEG", 
+       "label": "Vegetarian" 
+    }
+  ],
+  "tickets": [
+    { 
+      "handle": "banquet6", 
+      "label": "General Admission",
+      "price_cents": 4500 
     }
   ]
+},
+{
+  "id": "banquet-7",
+  "title": "Banquet 7",
+  "datetime_iso": "2026-04-22T09:00:00-04:00",
+  "venue": "Venue TBD",
+  "description": "Morning banquet with three meal options.",
+  "meal_required": true,
+  "meals": [
+    { "code": "CHICKEN", "label": "Chicken Entrée" },
+    { "code": "BEEF", "label": "Beef Entrée" },
+    { "code": "VEG", "label": "Vegetarian" }
+  ],
+  "tickets": [
+    { "handle": "banquet7", "label": "General Admission", "price_cents": 3500 }
+  ]
+},
+{
+  "id": "banquet-8",
+  "title": "Banquet 8",
+  "datetime_iso": "2026-04-22T13:00:00-04:00",
+  "venue": "Venue TBD",
+  "description": "Lunch banquet with three meal options.",
+  "meal_required": true,
+  "meals": [
+    { "code": "CHICKEN", "label": "Chicken Entrée" },
+    { "code": "BEEF", "label": "Beef Entrée" },
+    { "code": "VEG", "label": "Vegetarian" }
+  ],
+  "tickets": [
+    { "handle": "banquet8", "label": "General Admission", "price_cents": 5500 }
+  ]
+}  ]
 }
