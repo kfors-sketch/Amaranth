@@ -1,5 +1,4 @@
-/* base styles */
-*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
+/* base styles */*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
 a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 .container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
@@ -10,17 +9,6 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 .site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
 .logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
-.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}.hero-inner{padding:3rem 0}
+.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}.hero-inner{padding:4rem 0}
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
-footer{border-top:1px solid #e5e7eb;margin-top:2rem}
-.nav a{margin-right:1rem}
-.section{padding:2rem 0}
-.badge{display:inline-block;padding:.2rem .5rem;border-radius:.4rem;background:#eef2ff;color:#3730a3;font-weight:600}
-.notice{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:.5rem .75rem;border-radius:.5rem}
-fieldset{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;margin:1rem 0}
-legend{font-weight:700;padding:0 .5rem}
-#watermark::before{content:"";position:fixed;inset:0;background:url('/assets/img/amaranth.svg') center/480px no-repeat;opacity:.06;pointer-events:none;z-index:0}
-main, header, footer, section, .card{position:relative;z-index:1}
-:root{--accent:#1d4ed8}
-.site-header,.btn-primary{background:var(--accent);border-color:var(--accent)}
-.site-header .logo span, .site-header a {color:#fff}
+.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}

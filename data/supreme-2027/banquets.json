@@ -6,7 +6,6 @@
       "datetime_iso": "2027-04-18T17:00:00-04:00",
       "venue": "Venue TBD",
       "description": "Formal dinner with program.",
-      "meal_required": true,
       "meals": [
         {
           "code": "CHICKEN",
@@ -31,12 +30,24 @@
     },
     {
       "id": "banquet-2",
-      "title": "Banquet 2 (Breakfast)",
+      "title": "Banquet 2",
       "datetime_iso": "2027-04-19T09:00:00-04:00",
       "venue": "Venue TBD",
-      "description": "Breakfast banquet\u2014no meal choice required.",
-      "meal_required": false,
-      "meals": [],
+      "description": "Breakfast banquet.",
+      "meals": [
+        {
+          "code": "OMELET",
+          "label": "Omelet Plate"
+        },
+        {
+          "code": "PANCAKE",
+          "label": "Pancakes & Fruit"
+        },
+        {
+          "code": "VEG",
+          "label": "Vegetarian Plate"
+        }
+      ],
       "tickets": [
         {
           "handle": "banquet2",
@@ -50,8 +61,7 @@
       "title": "Banquet 3",
       "datetime_iso": "2027-04-20T13:00:00-04:00",
       "venue": "Venue TBD",
-      "description": "Luncheon with two entr\u00e9e choices.",
-      "meal_required": true,
+      "description": "Luncheon.",
       "meals": [
         {
           "code": "CHICKEN",
@@ -75,8 +85,7 @@
       "title": "Banquet 4",
       "datetime_iso": "2027-04-20T17:00:00-04:00",
       "venue": "Venue TBD",
-      "description": "Evening dinner with two entr\u00e9e choices.",
-      "meal_required": true,
+      "description": "Evening dinner.",
       "meals": [
         {
           "code": "BEEF",
@@ -97,12 +106,16 @@
     },
     {
       "id": "banquet-5",
-      "title": "Banquet 5 (Buffet)",
+      "title": "Banquet 5",
       "datetime_iso": "2027-04-21T13:00:00-04:00",
       "venue": "Venue TBD",
-      "description": "Buffet service (no meal choice).",
-      "meal_required": false,
-      "meals": [],
+      "description": "Buffet service.",
+      "meals": [
+        {
+          "code": "BUFFET",
+          "label": "Buffet (no selection)"
+        }
+      ],
       "tickets": [
         {
           "handle": "banquet5",

@@ -3,7 +3,7 @@
     {
       "handle": "crochet-shawl",
       "name": "Crocheted Shawl",
-      "description": "Handmade, assorted colors.",
+      "description": "Handmade, soft yarn, assorted colors.",
       "price_cents": 4500
     },
     {
@@ -11,6 +11,24 @@
       "name": "Beaded Bracelet",
       "description": "Glass beads, elastic fit.",
       "price_cents": 2000
+    },
+    {
+      "handle": "quilted-runner",
+      "name": "Quilted Table Runner",
+      "description": "Patchwork design, approx. 14\"\u00d760\".",
+      "price_cents": 3800
+    },
+    {
+      "handle": "candle-handpoured",
+      "name": "Hand-Poured Candle",
+      "description": "Soy wax, light fragrance.",
+      "price_cents": 1600
+    },
+    {
+      "handle": "card-set-6",
+      "name": "Greeting Card Set (6)",
+      "description": "Blank inside, handmade designs.",
+      "price_cents": 1200
     }
   ]
 }

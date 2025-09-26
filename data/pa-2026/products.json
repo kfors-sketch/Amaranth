@@ -23,6 +23,12 @@
       "name": "Classic Tote Bag",
       "description": "Canvas tote with emblem.",
       "price_cents": 2200
+    },
+    {
+      "handle": "notebook-crest",
+      "name": "Crest Notebook",
+      "description": "A5 lined notebook.",
+      "price_cents": 1400
     }
   ]
 }
