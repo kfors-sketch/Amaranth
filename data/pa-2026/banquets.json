@@ -2,9 +2,9 @@
   "events": [
     {
       "id": "banquet-1",
-      "title": "Banquet 1",
+      "title": "Trails & Treasures Feast",
       "datetime_iso": "2026-04-18T17:00:00-04:00",
-      "venue": "Venue TBD",
+      "venue": "Court Room",
       "description": "Formal dinner with program.",
       "meals": [
         {
@@ -30,9 +30,9 @@
     },
     {
       "id": "banquet-2",
-      "title": "Banquet 2",
+      "title": "Grand Floor Officers Breakfast",
       "datetime_iso": "2026-04-19T09:00:00-04:00",
-      "venue": "Venue TBD",
+      "venue": "Palm Court",
       "description": "Breakfast banquet.",
       "meals": [
         {
@@ -52,15 +52,15 @@
         {
           "handle": "banquet2",
           "label": "General Admission",
-          "price_cents": 4000
+          "price_cents": 2500
         }
       ]
     },
     {
       "id": "banquet-3",
-      "title": "Banquet 3",
+      "title": "Past Grands Luncheon",
       "datetime_iso": "2026-04-20T13:00:00-04:00",
-      "venue": "Venue TBD",
+      "venue": "Tea Room",
       "description": "Luncheon.",
       "meals": [
         {
@@ -76,15 +76,15 @@
         {
           "handle": "banquet3",
           "label": "General Admission",
-          "price_cents": 4500
+          "price_cents": 4000
         }
       ]
     },
     {
       "id": "banquet-4",
-      "title": "Banquet 4",
+      "title": "Supreme Luncheon",
       "datetime_iso": "2026-04-20T17:00:00-04:00",
-      "venue": "Venue TBD",
+      "venue": "Palm Court",
       "description": "Evening dinner.",
       "meals": [
         {
