@@ -8,7 +8,7 @@ async function renderGroupHome(){
   const homeProducts=document.getElementById('home-products');
   if(homeBanquets){
     const banquets=await getJSON(`/data/${org}/banquets.json`);
-    homeBanquets.innerHTML=(banquets.events||[]).slice(0,5).map(ev=>`
+    homeBanquets.innerHTML=(banquets.events||[]).slice(0,8).map(ev=>`
       <div class="card"><h3>${ev.title}</h3><p>${new Date(ev.datetime_iso).toLocaleString()}</p><p>${ev.venue||''}</p></div>
     `).join('');
   }
