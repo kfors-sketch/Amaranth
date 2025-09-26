@@ -76,7 +76,7 @@ async function renderOrder(){
   if(donateWrap && settings.donations?.allow_extra_on_order){
     donateWrap.innerHTML=`<p>${settings.donations.purpose_text||''}</p>
       <div id="donation-quick"></div>
-      <label>Custom amount (USD) <input type="number" id="donation-amount" min="0" step="1" value="${settings.donations.default_amount||50}"></label>`;
+      <label>Custom amount (USD) <input type="number" id="donation-amount" min="0" step="1" value="${settings.donations.default_amount||0}"></label>`;
     const quick=donateWrap.querySelector('#donation-quick');
     if(quick){
       quick.innerHTML=(settings.donations.suggested||[]).map(v=>`<button class="btn" data-dn="${v}">$${v}</button>`).join(' ');
