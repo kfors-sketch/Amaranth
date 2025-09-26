@@ -14,10 +14,10 @@
   "donations": {
     "purpose_text": "Support programs and session activities.",
     "suggested": [
-      25,
-      50,
-      100,
-      250
+      5,
+      10,
+      20,
+      50
     ],
     "default_amount": 0,
     "allow_extra_on_order": true,
