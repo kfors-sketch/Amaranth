@@ -344,6 +344,10 @@ async function checkout(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
+  // ✅ Set data-org on <body> so org-specific wallpaper works
+  const org = currentOrg();
+  if (org) document.body.setAttribute('data-org', org);
+
   renderGroupHome();
   renderBanquets();
   renderDirectory();
