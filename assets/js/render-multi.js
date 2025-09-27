@@ -184,14 +184,21 @@ function attendeeCard(i){
       </div></div>`;
   }).join('');
 
-  // Per-attendee Registration toggle (optional)
+  // Per-attendee Registration callout (styled)
+  const checked = STATE.attendees[i]?.registration ? ' checked' : '';
+  const activeClass = STATE.attendees[i]?.registration ? ' active' : '';
   const regBlock = `
-    <div class="grid-3" style="margin-top:.5rem;">
-      <label style="display:flex;align-items:center;gap:.5rem;">
-        <input type="checkbox" class="a-register" data-i="${i}">
-        <span>Register this attendee</span>
+    <div class="reg-box${activeClass}" data-i="${i}">
+      <label style="display:flex;align-items:center;gap:.6rem;margin:0;">
+        <input type="checkbox" class="a-register" data-i="${i}"${checked}>
+        <div>
+          <div class="title">
+            Register this attendee
+            <span class="price-chip">${money(regPriceCents())}</span>
+          </div>
+          <div class="hint">Optional – adds a registration tied to this person’s name.</div>
+        </div>
       </label>
-      <div class="tiny">Adds ${money(regPriceCents())} for registration (optional).</div>
     </div>`;
 
   return `<div class="card mt" id="att-${i}">
@@ -231,7 +238,20 @@ function bindAttendeeInputs(){
   document.querySelectorAll('.ticket').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev'));const [h,c]=e.target.value?e.target.value.split('|'):[null,0]; if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].handle=h; STATE.attendees[i].selections[ev].price_cents=Number(c||0); updateTotal();}));
   document.querySelectorAll('.meal').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].meal=e.target.value;}));
   document.querySelectorAll('.diet').forEach(inp=>inp.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].dietary=e.target.value;}));
-  document.querySelectorAll('.a-register').forEach(chk=>chk.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].registration=!!e.target.checked; updateTotal();}));
+
+  // Enhanced registration toggle: update state + visual class
+  document.querySelectorAll('.a-register').forEach(chk=>{
+    const box = chk.closest('.reg-box');
+    const i = Number(chk.getAttribute('data-i'));
+    const sync = () => {
+      STATE.attendees[i].registration = !!chk.checked;
+      if (box) box.classList.toggle('active', chk.checked);
+      updateTotal();
+    };
+    chk.addEventListener('change', sync);
+    // initialize visuals based on current state
+    sync();
+  });
 }
 
 function updateTotal(){
