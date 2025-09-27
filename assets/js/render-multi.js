@@ -285,6 +285,7 @@ function bindAttendeeInputs(){
 
 function updateTotal(){
   let total=0;
+  let feeTotal=0;            // <-- NEW: track all fees in cents
 
   // We'll also build a line-item list for the Summary box
   const lines = [];
@@ -303,7 +304,9 @@ function updateTotal(){
         const t = (ev?.tickets||[]).find(x=>x.handle===sel.handle);
         const label = `${a.name||'Attendee'} — ${ev?.title||'Event'} — ${(t?.label)||'Ticket'}`;
         const base = Number(sel.price_cents||t?.price_cents||0);
-        const line = base + surchargeOf(base);
+        const fee  = surchargeOf(base);
+        const line = base + fee;
+        feeTotal += fee;
         total += line;
         pushLine(label, line);
       }
@@ -315,7 +318,10 @@ function updateTotal(){
   if(regCents>0){
     STATE.attendees.forEach(a=>{
       if(a.registration){
-        const line = regCents + surchargeOf(regCents);
+        const base = regCents;
+        const fee  = surchargeOf(base);
+        const line = base + fee;
+        feeTotal += fee;
         total += line;
         pushLine(`${a.name||'Attendee'} — Registration`, line);
       }
@@ -329,7 +335,9 @@ function updateTotal(){
     if(q>0){
       for(let i=0;i<q;i++){
         const base = Number(p.price_cents||0);
-        const line = base + surchargeOf(base);
+        const fee  = surchargeOf(base);
+        const line = base + fee;
+        feeTotal += fee;
         total += line;
 
         // attach corsage note if present
@@ -346,8 +354,9 @@ function updateTotal(){
   const dn=document.getElementById('donation-amount'); 
   const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
   if(dnCents>0){ 
-    const sd = surchargeOf(dnCents);
-    const line = dnCents + sd;
+    const fee  = surchargeOf(dnCents);
+    const line = dnCents + fee;
+    feeTotal += fee;
     total += line; 
     pushLine('Extra Donation', line);
   }
@@ -366,19 +375,14 @@ function updateTotal(){
     }
   }
 
-  // Explain fees line (applies to items AND donations)
+  // Show the actual combined fee amount (separate from the equation)
   const feesEl = document.getElementById('fees-line');
   if (feesEl) {
     const s = STATE.settings?.surcharge || {};
-    const P = Number(s.fee_percent || 0);
-    const F = Number(s.fee_fixed_cents || 0);
-    const CAP = Number(s.cap_percent || 0);
-    if (s.enabled && (P > 0 || F > 0)) {
-      const parts = [];
-      if (P > 0) parts.push(`${(P*100).toFixed(2).replace(/\.00$/,'')}%`);
-      if (F > 0) parts.push(`${money(F)}`);
-      const capTxt = CAP > 0 ? ` (capped at ${(CAP*100).toFixed(0)}%)` : '';
-      feesEl.textContent = `Total includes card processing fees per item and on donations: ${parts.join(' + ')}${capTxt}.`;
+    if (s.enabled && feeTotal > 0) {
+      feesEl.innerHTML = `<strong>Fees added:</strong> ${money(feeTotal)} <span class="tiny">(card processing)</span>`;
+    } else if (s.enabled) {
+      feesEl.textContent = `Fees added: $0.00`;
     } else {
       feesEl.textContent = `No card processing fee added to customer total.`;
     }
