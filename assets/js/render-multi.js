@@ -19,6 +19,7 @@ async function renderGroupHome(){
     `).join('');
   }
 }
+
 async function renderBanquets(){
   const org=currentOrg();
   const data=await getJSON(`/data/${org}/banquets.json`);
@@ -30,11 +31,13 @@ async function renderBanquets(){
       <p class="tiny">Meals: ${(ev.meals||[]).map(m=>m.label).join(', ')}</p>
     </div>`).join('');}
 }
+
 async function renderDirectory(){
   const org=currentOrg();const el=document.getElementById('directory-info');
   if(!el) return; const s=await getJSON(`/data/${org}/settings.json`);
   el.textContent=s.directory?.blurb||'Purchase a printed directory via the Order page.';
 }
+
 async function renderShop(){
   const org=currentOrg();const data=await getJSON(`/data/${org}/products.json`);
   const grid=document.getElementById('product-grid');
@@ -42,7 +45,7 @@ async function renderShop(){
     <div class="card"><h3>${p.name}</h3><p>${p.description||''}</p><div class="price">${money(p.price_cents)}</div></div>`).join('');}
 }
 
-// ORDER
+// ===== ORDER =====
 let STATE=null;
 function surchargeOf(base){
   const s=STATE.settings?.surcharge||{};const P=Number(s.fee_percent||0),F=Number(s.fee_fixed_cents||0),CAP=Number(s.cap_percent||0);
@@ -50,6 +53,13 @@ function surchargeOf(base){
   const gross=Math.ceil((base+F)/(1-P)); let sur=gross-base;
   if(CAP>0){const capPct=Math.floor(base*CAP); if(sur>capPct) sur=capPct;} return sur;
 }
+
+// Registration price helper (from products)
+function regPriceCents(){
+  const p=(STATE.products.items||[]).find(x=>x.handle==='registration');
+  return p ? Number(p.price_cents||0) : 0;
+}
+
 async function renderOrder(){
   const org=currentOrg(); if(!org) return;
   const [products,banquets,settings]=await Promise.all([
@@ -58,91 +68,89 @@ async function renderOrder(){
     getJSON(`/data/${org}/settings.json`)
   ]);
   STATE={org, attendees:[], store:{}, storeNotes:{}, products, banquets, settings};
+
   document.getElementById('add-attendee')?.addEventListener('click', addAttendee);
   addAttendee();
 
-  const store = document.getElementById('store-list');
-if (store) {
-  store.innerHTML = (products.items || []).map(p => {
-    // Special UI for corsage
-    if (p.handle === 'corsage') {
-      const qty = STATE.store['corsage'] || 0;
-      const note = STATE.storeNotes['corsage'] || '';
-      const presets = ['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
-      const selected = presets.includes(note) ? note : (note ? 'Custom' : 'Red Roses');
-      const customText = (selected === 'Custom' && !presets.includes(note)) ? note : '';
+  // ----- Add Items (store) -----
+  const store=document.getElementById('store-list');
+  if(store){
+    store.innerHTML=(products.items||[])
+      .filter(p=>p.handle!=='registration') // skip registration here; handled per-attendee
+      .map(p=>{
+        if(p.handle==='corsage'){
+          const qty=STATE.store['corsage']||0;
+          const note=STATE.storeNotes['corsage']||'';
+          const presets=['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
+          const selected=presets.includes(note)?note:(note?'Custom':'Red Roses');
+          const customText=(selected==='Custom' && !presets.includes(note))?note:'';
+          return `
+            <div class="card">
+              <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
+              <p>${p.description||''}</p>
+              <div class="grid-3">
+                <label>Style
+                  <select id="corsage-style">
+                    <option value="Red Roses"${selected==='Red Roses'?' selected':''}>Red Roses</option>
+                    <option value="Pink Roses"${selected==='Pink Roses'?' selected':''}>Pink Roses</option>
+                    <option value="Yellow Roses"${selected==='Yellow Roses'?' selected':''}>Yellow Roses</option>
+                    <option value="Spring Flowers"${selected==='Spring Flowers'?' selected':''}>Spring Flowers</option>
+                    <option value="Custom"${selected==='Custom'?' selected':''}>Custom</option>
+                  </select>
+                </label>
+                <label>Custom text (if Custom)
+                  <input type="text" id="corsage-custom" placeholder="Describe your request" value="${customText}">
+                </label>
+                <label>Qty
+                  <input type="number" id="corsage-qty" min="0" value="${qty}">
+                </label>
+              </div>
+            </div>`;
+        }
+        const q=STATE.store[p.handle]||0;
+        return `
+          <div class="card">
+            <h3>${p.name}</h3>
+            <p>${p.description||''}</p>
+            <div class="price">${money(p.price_cents)}</div>
+            <label>Qty <input type="number" min="0" value="${q}" data-handle="${p.handle}" class="store-qty"></label>
+          </div>`;
+      }).join('');
 
-      return `
-        <div class="card">
-          <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
-          <p>${p.description || ''}</p>
-          <div class="grid-3">
-            <label>Style
-              <select id="corsage-style">
-                <option value="Red Roses"${selected==='Red Roses'?' selected':''}>Red Roses</option>
-                <option value="Pink Roses"${selected==='Pink Roses'?' selected':''}>Pink Roses</option>
-                <option value="Yellow Roses"${selected==='Yellow Roses'?' selected':''}>Yellow Roses</option>
-                <option value="Spring Flowers"${selected==='Spring Flowers'?' selected':''}>Spring Flowers</option>
-                <option value="Custom"${selected==='Custom'?' selected':''}>Custom</option>
-              </select>
-            </label>
-            <label>Custom text (if Custom)
-              <input type="text" id="corsage-custom" placeholder="Describe your request" value="${customText}">
-            </label>
-            <label>Qty
-              <input type="number" id="corsage-qty" min="0" value="${qty}">
-            </label>
-          </div>
-        </div>`;
-    }
-
-    // Default UI for other products
-    const q = STATE.store[p.handle] || 0;
-    return `
-      <div class="card">
-        <h3>${p.name}</h3>
-        <p>${p.description || ''}</p>
-        <div class="price">${money(p.price_cents)}</div>
-        <label>Qty <input type="number" min="0" value="${q}" data-handle="${p.handle}" class="store-qty"></label>
-      </div>`;
-  }).join('');
-
-  // Regular product qty handlers
-  document.querySelectorAll('.store-qty').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const h = e.target.getAttribute('data-handle');
-      const v = Math.max(0, Number(e.target.value || 0));
-      if (v === 0) delete STATE.store[h]; else STATE.store[h] = v;
-      updateTotal();
+    // regular product qty handlers
+    document.querySelectorAll('.store-qty').forEach(inp=>{
+      inp.addEventListener('input',e=>{
+        const h=e.target.getAttribute('data-handle');
+        const v=Math.max(0,Number(e.target.value||0));
+        if(v===0) delete STATE.store[h]; else STATE.store[h]=v;
+        updateTotal();
+      });
     });
-  });
 
-  // Corsage handlers (if present)
-  const cq = document.getElementById('corsage-qty');
-  const cs = document.getElementById('corsage-style');
-  const cc = document.getElementById('corsage-custom');
-
-  function syncCorsage(){
-    if (!cq || !cs || !cc) return;
-    const qty = Math.max(0, Number(cq.value || 0));
-    const style = cs.value;
-    const custom = cc.value.trim();
-    if (qty > 0) {
-      STATE.store['corsage'] = qty;
-      STATE.storeNotes['corsage'] = (style === 'Custom') ? (custom || 'Custom') : style;
-    } else {
-      delete STATE.store['corsage'];
-      delete STATE.storeNotes['corsage'];
+    // corsage handlers
+    const cq=document.getElementById('corsage-qty');
+    const cs=document.getElementById('corsage-style');
+    const cc=document.getElementById('corsage-custom');
+    function syncCorsage(){
+      if(!cq||!cs||!cc) return;
+      const qty=Math.max(0,Number(cq.value||0));
+      const style=cs.value;
+      const custom=cc.value.trim();
+      if(qty>0){
+        STATE.store['corsage']=qty;
+        STATE.storeNotes['corsage']=(style==='Custom')?(custom||'Custom'):style;
+      }else{
+        delete STATE.store['corsage'];
+        delete STATE.storeNotes['corsage'];
+      }
+      updateTotal();
     }
-    updateTotal();
+    cq?.addEventListener('input',syncCorsage);
+    cs?.addEventListener('change',syncCorsage);
+    cc?.addEventListener('input',syncCorsage);
   }
-  cq?.addEventListener('input',  syncCorsage);
-  cs?.addEventListener('change', syncCorsage);
-  cc?.addEventListener('input',  syncCorsage);
-}
 
-
-  // Extra donation UI (enabled by settings for event orgs)
+  // ----- Donation -----
   const donateWrap=document.getElementById('extra-donation');
   if(donateWrap && settings.donations?.allow_extra_on_order){
     donateWrap.innerHTML=`<p>${settings.donations.purpose_text||''}</p>
@@ -162,6 +170,7 @@ if (store) {
   document.getElementById('checkout')?.addEventListener('click', checkout);
   updateTotal();
 }
+
 function attendeeCard(i){
   const evs=STATE.banquets.events||[];
   const blocks=evs.map((ev,idx)=>{
@@ -174,17 +183,46 @@ function attendeeCard(i){
         <label>Dietary<input type="text" class="diet" data-i="${i}" data-ev="${idx}" placeholder="e.g., gluten-free"></label>
       </div></div>`;
   }).join('');
+
+  // Per-attendee Registration toggle (optional)
+  const regBlock = `
+    <div class="grid-3" style="margin-top:.5rem;">
+      <label style="display:flex;align-items:center;gap:.5rem;">
+        <input type="checkbox" class="a-register" data-i="${i}">
+        <span>Register this attendee</span>
+      </label>
+      <div class="tiny">Adds ${money(regPriceCents())} for registration (optional).</div>
+    </div>`;
+
   return `<div class="card mt" id="att-${i}">
-    <div style="display:flex;justify-content:space-between;align-items:center;"><h3>Attendee ${i+1}</h3><button class="btn" onclick="removeAttendee(${i})">Remove</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3>Attendee ${i+1}</h3><button class="btn" onclick="removeAttendee(${i})">Remove</button>
+    </div>
     <div class="grid-3">
       <label>Full name<input type="text" class="a-name" data-i="${i}" required></label>
       <label>Email (optional)<input type="email" class="a-email" data-i="${i}"></label>
       <label>Title (optional)<input type="text" class="a-title" data-i="${i}"></label>
-    </div>${blocks}</div>`;
+    </div>
+    ${blocks}
+    ${regBlock}
+  </div>`;
 }
-function renderAttendees(){document.getElementById('attendee-list').innerHTML=STATE.attendees.map((a,i)=>attendeeCard(i)).join(''); bindAttendeeInputs();}
-function addAttendee(){STATE.attendees.push({name:'',email:'',title:'',selections:[]}); renderAttendees();}
-function removeAttendee(i){STATE.attendees.splice(i,1); renderAttendees(); updateTotal();}
+
+function renderAttendees(){
+  document.getElementById('attendee-list').innerHTML=STATE.attendees.map((a,i)=>attendeeCard(i)).join('');
+  bindAttendeeInputs();
+}
+
+function addAttendee(){
+  STATE.attendees.push({name:'',email:'',title:'',selections:[], registration:false});
+  renderAttendees();
+}
+
+function removeAttendee(i){
+  STATE.attendees.splice(i,1);
+  renderAttendees();
+  updateTotal();
+}
 
 function bindAttendeeInputs(){
   document.querySelectorAll('.a-name').forEach(el=>el.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].name=e.target.value;}));
@@ -193,15 +231,39 @@ function bindAttendeeInputs(){
   document.querySelectorAll('.ticket').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev'));const [h,c]=e.target.value?e.target.value.split('|'):[null,0]; if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].handle=h; STATE.attendees[i].selections[ev].price_cents=Number(c||0); updateTotal();}));
   document.querySelectorAll('.meal').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].meal=e.target.value;}));
   document.querySelectorAll('.diet').forEach(inp=>inp.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].dietary=e.target.value;}));
+  document.querySelectorAll('.a-register').forEach(chk=>chk.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].registration=!!e.target.checked; updateTotal();}));
 }
+
 function updateTotal(){
   let total=0;
+
+  // banquet tickets
   STATE.attendees.forEach(a=>(a.selections||[]).forEach(sel=>{if(sel?.handle){total+=sel.price_cents+surchargeOf(sel.price_cents);}}));
-  (STATE.products.items||[]).forEach(p=>{const q=Number(STATE.store[p.handle]||0); if(q>0){for(let i=0;i<q;i++){total+=p.price_cents+surchargeOf(p.price_cents);}}});
-  const dn=document.getElementById('donation-amount'); const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
-  if(dnCents>0){ const sd=STATE.settings?.donations?.surcharge_donations ? surchargeOf(dnCents) : 0; total+=dnCents+sd; }
-  const el=document.getElementById('order-total'); if(el) el.textContent=money(total);
+
+  // per-attendee registration
+  const regCents = regPriceCents();
+  if(regCents>0){
+    STATE.attendees.forEach(a=>{ if(a.registration){ total += regCents + surchargeOf(regCents); } });
+  }
+
+  // store items (including corsage)
+  (STATE.products.items||[]).forEach(p=>{
+    const q=Number(STATE.store[p.handle]||0);
+    if(q>0){ for(let i=0;i<q;i++){ total += p.price_cents + surchargeOf(p.price_cents); } }
+  });
+
+  // donation
+  const dn=document.getElementById('donation-amount'); 
+  const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
+  if(dnCents>0){ 
+    const sd=STATE.settings?.donations?.surcharge_donations ? surchargeOf(dnCents) : 0; 
+    total += dnCents + sd; 
+  }
+
+  const el=document.getElementById('order-total'); 
+  if(el) el.textContent=money(total);
 }
+
 async function checkout(){
   const purchaser={
     name:document.getElementById('p_name').value.trim(),
@@ -217,12 +279,25 @@ async function checkout(){
       country:document.getElementById('p_country').value.trim()
     }
   };
-  if(!purchaser.name||!purchaser.email||!purchaser.phone||!purchaser.address.line1||!purchaser.address.city||!purchaser.address.state||!purchaser.address.postal_code||!purchaser.address.country){alert('Please complete purchaser info.'); return;}
-  const dn=document.getElementById('donation-amount'); const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
+  if(!purchaser.name||!purchaser.email||!purchaser.phone||!purchaser.address.line1||!purchaser.address.city||!purchaser.address.state||!purchaser.address.postal_code||!purchaser.address.country){
+    alert('Please complete purchaser info.'); return;
+  }
+  const dn=document.getElementById('donation-amount'); 
+  const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
+
+  // send store_notes so corsage style/custom can appear on Stripe (tiny API tweak needed)
   const body={ org:STATE.org, order:{ purchaser, attendees:STATE.attendees, store:STATE.store, store_notes:STATE.storeNotes, extra_donation_cents } };
+
   try{
     const res=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await res.json(); if(!d.url) throw new Error(d.error||'Checkout failed'); location.href=d.url;
   }catch(e){ alert(e.message); }
 }
-document.addEventListener('DOMContentLoaded',()=>{renderGroupHome();renderBanquets();renderDirectory();renderShop();renderOrder();});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderGroupHome();
+  renderBanquets();
+  renderDirectory();
+  renderShop();
+  renderOrder();
+});
