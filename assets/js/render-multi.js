@@ -127,19 +127,23 @@ async function renderOrder(){
     const addonsHTML = addons.map(p => p.handle==='corsage' ? renderCorsage(p) : renderItem(p)).join('');
     const merchHTML  = merch.map(renderItem).join('');
 
+    // >>> Ensured stacking: merchandise is below add-ons <<<
     store.innerHTML = `
-      <section class="card">
-        <h2>Event add-ons</h2>
-        <div class="grid-2">
-          ${addonsHTML || '<div class="tiny">No add-ons available.</div>'}
-        </div>
-      </section>
-      <section class="card mt">
-        <h2>Merchandise</h2>
-        <div class="grid-3">
-          ${merchHTML || '<div class="tiny">No merchandise available.</div>'}
-        </div>
-      </section>
+      <div class="store-sections">
+        <section class="card store-addons">
+          <h2>Event add-ons</h2>
+          <div class="grid-2">
+            ${addonsHTML || '<div class="tiny">No add-ons available.</div>'}
+          </div>
+        </section>
+
+        <section class="card store-merch" style="margin-top:24px">
+          <h2>Merchandise</h2>
+          <div class="grid-3">
+            ${merchHTML || '<div class="tiny">No merchandise available.</div>'}
+          </div>
+        </section>
+      </div>
     `;
 
     // qty handlers for normal items (both sections)
