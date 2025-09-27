@@ -75,49 +75,74 @@ async function renderOrder(){
   // ----- Add Items (store) -----
   const store=document.getElementById('store-list');
   if(store){
-    store.innerHTML=(products.items||[])
-      .filter(p=>p.handle!=='registration') // skip registration here; handled per-attendee
-      .map(p=>{
-        if(p.handle==='corsage'){
-          const qty=STATE.store['corsage']||0;
-          const note=STATE.storeNotes['corsage']||'';
-          const presets=['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
-          const selected=presets.includes(note)?note:(note?'Custom':'Red Roses');
-          const customText=(selected==='Custom' && !presets.includes(note))?note:'';
-          return `
-            <div class="card">
-              <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
-              <p>${p.description||''}</p>
-              <div class="grid-3">
-                <label>Style
-                  <select id="corsage-style">
-                    <option value="Red Roses"${selected==='Red Roses'?' selected':''}>Red Roses</option>
-                    <option value="Pink Roses"${selected==='Pink Roses'?' selected':''}>Pink Roses</option>
-                    <option value="Yellow Roses"${selected==='Yellow Roses'?' selected':''}>Yellow Roses</option>
-                    <option value="Spring Flowers"${selected==='Spring Flowers'?' selected':''}>Spring Flowers</option>
-                    <option value="Custom"${selected==='Custom'?' selected':''}>Custom</option>
-                  </select>
-                </label>
-                <label>Custom text (if Custom)
-                  <input type="text" id="corsage-custom" placeholder="Describe your request" value="${customText}">
-                </label>
-                <label>Qty
-                  <input type="number" id="corsage-qty" min="0" value="${qty}">
-                </label>
-              </div>
-            </div>`;
-        }
-        const q=STATE.store[p.handle]||0;
-        return `
-          <div class="card">
-            <h3>${p.name}</h3>
-            <p>${p.description||''}</p>
-            <div class="price">${money(p.price_cents)}</div>
-            <label>Qty <input type="number" min="0" value="${q}" data-handle="${p.handle}" class="store-qty"></label>
-          </div>`;
-      }).join('');
+    // classify into Event add-ons vs Merchandise
+    const addonsHandles = new Set(['directory','corsage']); // adjust if your directory handle differs
+    const items = (products.items||[]);
+    const addons = items.filter(p => addonsHandles.has(p.handle) && p.handle!=='registration');
+    const merch  = items.filter(p => !addonsHandles.has(p.handle) && p.handle!=='registration');
 
-    // regular product qty handlers
+    // renderer for normal product
+    const renderItem = (p) => {
+      const q=STATE.store[p.handle]||0;
+      return `
+        <div class="card">
+          <h3>${p.name}</h3>
+          <p>${p.description||''}</p>
+          <div class="price">${money(p.price_cents)}</div>
+          <label>Qty <input type="number" min="0" value="${q}" data-handle="${p.handle}" class="store-qty"></label>
+        </div>`;
+    };
+
+    // special renderer for corsage product
+    const renderCorsage = (p) => {
+      const qty=STATE.store['corsage']||0;
+      const note=STATE.storeNotes['corsage']||'';
+      const presets=['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
+      const selected=presets.includes(note)?note:(note?'Custom':'Red Roses');
+      const customText=(selected==='Custom' && !presets.includes(note))?note:'';
+      return `
+        <div class="card">
+          <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
+          <p>${p.description||''}</p>
+          <div class="grid-3">
+            <label>Style
+              <select id="corsage-style">
+                <option value="Red Roses"${selected==='Red Roses'?' selected':''}>Red Roses</option>
+                <option value="Pink Roses"${selected==='Pink Roses'?' selected':''}>Pink Roses</option>
+                <option value="Yellow Roses"${selected==='Yellow Roses'?' selected':''}>Yellow Roses</option>
+                <option value="Spring Flowers"${selected==='Spring Flowers'?' selected':''}>Spring Flowers</option>
+                <option value="Custom"${selected==='Custom'?' selected':''}>Custom</option>
+              </select>
+            </label>
+            <label>Custom text (if Custom)
+              <input type="text" id="corsage-custom" placeholder="Describe your request" value="${customText}">
+            </label>
+            <label>Qty
+              <input type="number" id="corsage-qty" min="0" value="${qty}">
+            </label>
+          </div>
+        </div>`;
+    };
+
+    const addonsHTML = addons.map(p => p.handle==='corsage' ? renderCorsage(p) : renderItem(p)).join('');
+    const merchHTML  = merch.map(renderItem).join('');
+
+    store.innerHTML = `
+      <section class="card">
+        <h2>Event add-ons</h2>
+        <div class="grid-2">
+          ${addonsHTML || '<div class="tiny">No add-ons available.</div>'}
+        </div>
+      </section>
+      <section class="card mt">
+        <h2>Merchandise</h2>
+        <div class="grid-3">
+          ${merchHTML || '<div class="tiny">No merchandise available.</div>'}
+        </div>
+      </section>
+    `;
+
+    // qty handlers for normal items (both sections)
     document.querySelectorAll('.store-qty').forEach(inp=>{
       inp.addEventListener('input',e=>{
         const h=e.target.getAttribute('data-handle');
@@ -127,7 +152,7 @@ async function renderOrder(){
       });
     });
 
-    // corsage handlers
+    // corsage handlers (if present)
     const cq=document.getElementById('corsage-qty');
     const cs=document.getElementById('corsage-style');
     const cc=document.getElementById('corsage-custom');
@@ -135,7 +160,7 @@ async function renderOrder(){
       if(!cq||!cs||!cc) return;
       const qty=Math.max(0,Number(cq.value||0));
       const style=cs.value;
-      const custom=cc.value.trim();
+      const custom=(cc.value||'').trim();
       if(qty>0){
         STATE.store['corsage']=qty;
         STATE.storeNotes['corsage']=(style==='Custom')?(custom||'Custom'):style;
@@ -266,7 +291,7 @@ function updateTotal(){
     STATE.attendees.forEach(a=>{ if(a.registration){ total += regCents + surchargeOf(regCents); } });
   }
 
-  // store items (including corsage)
+  // store items (including directory + corsage + merch)
   (STATE.products.items||[]).forEach(p=>{
     const q=Number(STATE.store[p.handle]||0);
     if(q>0){ for(let i=0;i<q;i++){ total += p.price_cents + surchargeOf(p.price_cents); } }
