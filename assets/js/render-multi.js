@@ -286,19 +286,60 @@ function bindAttendeeInputs(){
 function updateTotal(){
   let total=0;
 
-  // banquet tickets
-  STATE.attendees.forEach(a=>(a.selections||[]).forEach(sel=>{if(sel?.handle){total+=sel.price_cents+surchargeOf(sel.price_cents);}}));
+  // We'll also build a line-item list for the Summary box
+  const lines = [];
+  const pushLine = (label, cents) => {
+    lines.push(`<li class="line" style="display:flex;justify-content:space-between;gap:1rem;">
+      <span>${label}</span><strong>${money(cents)}</strong>
+    </li>`);
+  };
 
-  // per-attendee registration
+  // banquet tickets (per attendee, per event selection)
+  const evs = STATE.banquets.events || [];
+  STATE.attendees.forEach(a=>{
+    (a.selections||[]).forEach((sel, evIdx)=>{
+      if(sel?.handle){
+        const ev = evs[evIdx];
+        const t = (ev?.tickets||[]).find(x=>x.handle===sel.handle);
+        const label = `${a.name||'Attendee'} — ${ev?.title||'Event'} — ${(t?.label)||'Ticket'}`;
+        const base = Number(sel.price_cents||t?.price_cents||0);
+        const line = base + surchargeOf(base);
+        total += line;
+        pushLine(label, line);
+      }
+    });
+  });
+
+  // per-attendee registration (optional)
   const regCents = regPriceCents();
   if(regCents>0){
-    STATE.attendees.forEach(a=>{ if(a.registration){ total += regCents + surchargeOf(regCents); } });
+    STATE.attendees.forEach(a=>{
+      if(a.registration){
+        const line = regCents + surchargeOf(regCents);
+        total += line;
+        pushLine(`${a.name||'Attendee'} — Registration`, line);
+      }
+    });
   }
 
-  // store items (including directory + corsage + merch)
-  (STATE.products.items||[]).forEach(p=>{
+  // store items (directory + corsage + merch)
+  const items = STATE.products.items || [];
+  items.forEach(p=>{
     const q=Number(STATE.store[p.handle]||0);
-    if(q>0){ for(let i=0;i<q;i++){ total += p.price_cents + surchargeOf(p.price_cents); } }
+    if(q>0){
+      for(let i=0;i<q;i++){
+        const base = Number(p.price_cents||0);
+        const line = base + surchargeOf(base);
+        total += line;
+
+        // attach corsage note if present
+        let label = p.name;
+        if(p.handle==='corsage' && STATE.storeNotes['corsage']){
+          label += ` — ${STATE.storeNotes['corsage']}`;
+        }
+        pushLine(label, line);
+      }
+    }
   });
 
   // donation
@@ -306,14 +347,26 @@ function updateTotal(){
   const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
   if(dnCents>0){ 
     const sd=STATE.settings?.donations?.surcharge_donations ? surchargeOf(dnCents) : 0; 
-    total += dnCents + sd; 
+    const line = dnCents + sd;
+    total += line; 
+    pushLine('Extra Donation', line);
   }
 
-  // show total
+  // update Total
   const el=document.getElementById('order-total'); 
   if(el) el.textContent=money(total);
 
-  // 🔹 Step 2: Explain fees line (are customers paying fees?)
+  // 🔹 Step 2a: render the line items into #order-lines
+  const linesEl = document.getElementById('order-lines');
+  if (linesEl) {
+    if (lines.length === 0) {
+      linesEl.innerHTML = `<div class="tiny">No items selected yet.</div>`;
+    } else {
+      linesEl.innerHTML = `<ul style="list-style:none;padding:0;margin:.5rem 0 0 0;">${lines.join('')}</ul>`;
+    }
+  }
+
+  // 🔹 Step 2b: Explain fees line (are customers paying fees?)
   const feesEl = document.getElementById('fees-line');
   if (feesEl) {
     const s = STATE.settings?.surcharge || {};
