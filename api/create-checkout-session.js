@@ -74,15 +74,20 @@ module.exports = async (req, res) => {
     // Store items
     const byHandle = Object.fromEntries((products.items || []).map(p => [p.handle, p]));
     if (order.store) {
-      for (const [h, qtyRaw] of Object.entries(order.store)) {
-        const qty = Math.max(0, Number(qtyRaw || 0));
-        const p = byHandle[h];
-        if (p && qty > 0) {
-          line_items.push({ price_data: { currency: 'usd', unit_amount: Number(p.price_cents || 0), product_data: { name: p.name } }, quantity: qty });
-          const s = computeSurcharge(Number(p.price_cents || 0), settings);
-          if (s > 0) line_items.push({ price_data: { currency: 'usd', unit_amount: s, product_data: { name: 'Card processing fee' } }, quantity: qty });
-        }
+      const notes = order.store_notes || {};
+for (let i = 0; i < qty; i++) {
+  line_items.push({
+    price_data: {
+      currency: 'usd',
+      unit_amount: Number(p.price_cents || 0),
+      product_data: {
+        name: p.name,
+        description: notes[h] ? String(notes[h]).slice(0,120) : undefined
       }
+    },
+    quantity: 1
+  });
+}
     }
 
     // Extra donation (no surcharge by default)
