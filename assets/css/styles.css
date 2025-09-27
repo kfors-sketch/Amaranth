@@ -79,4 +79,47 @@ body[data-org="supreme-2027"]::before {
 @media print {
   body::before { display:none; }
 }
+/* ===== Wallpaper: debug-strong & stacking fix ===== */
+:root{
+  --wallpaper-url: url('/assets/img/wallpaper.jpg'); /* default */
+  --wallpaper-opacity: 0.18;  /* temporarily stronger so it's obvious */
+  --wallpaper-size: cover;    /* fill screen */
+  --wallpaper-repeat: no-repeat;
+  --wallpaper-position: center center;
+}
+
+/* Create a stacking context so ::before sits under content but above body bg */
+body { position: relative; }
+
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;                  /* wallpaper layer */
+  pointer-events: none;
+
+  /* image + a faint tint so you can tell it's working even if image path is wrong */
+  background-image: var(--wallpaper-url);
+  background-position: var(--wallpaper-position);
+  background-repeat: var(--wallpaper-repeat);
+  background-size: var(--wallpaper-size);
+  opacity: var(--wallpaper-opacity);
+
+  /* fallback tint: comment this out later */
+  background-color: rgba(0,0,0,0.06);
+}
+
+/* Ensure all main content is above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-org overrides (optional: only if you want different images) */
+body[data-org="pa-2026"]::before {
+  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+}
+body[data-org="supreme-2027"]::before {
+  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
+}
 
