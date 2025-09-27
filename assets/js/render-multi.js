@@ -342,11 +342,11 @@ function updateTotal(){
     }
   });
 
-  // donation
+  // donation (ALWAYS include surcharge on donation)
   const dn=document.getElementById('donation-amount'); 
   const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
   if(dnCents>0){ 
-    const sd=STATE.settings?.donations?.surcharge_donations ? surchargeOf(dnCents) : 0; 
+    const sd = surchargeOf(dnCents);
     const line = dnCents + sd;
     total += line; 
     pushLine('Extra Donation', line);
@@ -356,7 +356,7 @@ function updateTotal(){
   const el=document.getElementById('order-total'); 
   if(el) el.textContent=money(total);
 
-  // 🔹 Step 2a: render the line items into #order-lines
+  // render the line items into #order-lines (if present)
   const linesEl = document.getElementById('order-lines');
   if (linesEl) {
     if (lines.length === 0) {
@@ -366,19 +366,19 @@ function updateTotal(){
     }
   }
 
-  // 🔹 Step 2b: Explain fees line (are customers paying fees?)
+  // Explain fees line (applies to items AND donations)
   const feesEl = document.getElementById('fees-line');
   if (feesEl) {
     const s = STATE.settings?.surcharge || {};
-    const P = Number(s.fee_percent || 0);          // e.g. 0.03 means 3%
-    const F = Number(s.fee_fixed_cents || 0);      // fixed cents per item
-    const CAP = Number(s.cap_percent || 0);        // e.g. 0.03 means cap at 3% of item price
+    const P = Number(s.fee_percent || 0);
+    const F = Number(s.fee_fixed_cents || 0);
+    const CAP = Number(s.cap_percent || 0);
     if (s.enabled && (P > 0 || F > 0)) {
       const parts = [];
       if (P > 0) parts.push(`${(P*100).toFixed(2).replace(/\.00$/,'')}%`);
       if (F > 0) parts.push(`${money(F)}`);
       const capTxt = CAP > 0 ? ` (capped at ${(CAP*100).toFixed(0)}%)` : '';
-      feesEl.textContent = `Total includes card processing fee per item: ${parts.join(' + ')}${capTxt}.`;
+      feesEl.textContent = `Total includes card processing fees per item and on donations: ${parts.join(' + ')}${capTxt}.`;
     } else {
       feesEl.textContent = `No card processing fee added to customer total.`;
     }
@@ -406,7 +406,7 @@ async function checkout(){
   const dn=document.getElementById('donation-amount'); 
   const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
 
-  // 🔹 ADDED: build priceMap so server knows store item prices
+  // build priceMap so server knows store item prices
   const priceMap = {};
   (STATE.products.items || []).forEach(p => {
     priceMap[p.handle] = Number(p.price_cents || 0);
@@ -421,7 +421,7 @@ async function checkout(){
       store:STATE.store, 
       store_notes:STATE.storeNotes, 
       extra_donation_cents,
-      store_price_cents_map: priceMap   // 🔹 ADDED: include store prices
+      store_price_cents_map: priceMap
     } 
   };
 
@@ -434,7 +434,7 @@ async function checkout(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-  // ✅ Set data-org on <body> so org-specific wallpaper works
+  // Set data-org on <body> so org-specific wallpaper works
   const org = currentOrg();
   if (org) document.body.setAttribute('data-org', org);
 
