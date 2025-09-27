@@ -13,6 +13,12 @@
       "price_cents": 1500
     },
     {
+      "handle": "corsage",
+      "name": "Corsage",
+      "description": "Choose color or write a custom request.",
+      "price_cents": 1500
+    },
+    {
       "handle": "lapel-pin-rose",
       "name": "Rose Lapel Pin",
       "description": "Enamel pin.",
