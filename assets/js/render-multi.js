@@ -309,8 +309,27 @@ function updateTotal(){
     total += dnCents + sd; 
   }
 
+  // show total
   const el=document.getElementById('order-total'); 
   if(el) el.textContent=money(total);
+
+  // 🔹 Step 2: Explain fees line (are customers paying fees?)
+  const feesEl = document.getElementById('fees-line');
+  if (feesEl) {
+    const s = STATE.settings?.surcharge || {};
+    const P = Number(s.fee_percent || 0);          // e.g. 0.03 means 3%
+    const F = Number(s.fee_fixed_cents || 0);      // fixed cents per item
+    const CAP = Number(s.cap_percent || 0);        // e.g. 0.03 means cap at 3% of item price
+    if (s.enabled && (P > 0 || F > 0)) {
+      const parts = [];
+      if (P > 0) parts.push(`${(P*100).toFixed(2).replace(/\.00$/,'')}%`);
+      if (F > 0) parts.push(`${money(F)}`);
+      const capTxt = CAP > 0 ? ` (capped at ${(CAP*100).toFixed(0)}%)` : '';
+      feesEl.textContent = `Total includes card processing fee per item: ${parts.join(' + ')}${capTxt}.`;
+    } else {
+      feesEl.textContent = `No card processing fee added to customer total.`;
+    }
+  }
 }
 
 async function checkout(){
