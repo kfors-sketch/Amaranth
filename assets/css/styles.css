@@ -38,3 +38,45 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
   border-color:#16a34a;                /* green when checked */
   background:#ecfdf5;                  /* soft green bg */
 }
+/* ==== Ghost / faint wallpaper (site-wide) ==== */
+:root{
+  --wallpaper-url: url('/assets/img/wallpaper.jpg');
+  --wallpaper-opacity: 0.06;
+  --wallpaper-size: 900px;
+  --wallpaper-repeat: no-repeat;
+  --wallpaper-position: center center;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image: var(--wallpaper-url);
+  background-position: var(--wallpaper-position);
+  background-repeat: var(--wallpaper-repeat);
+  background-size: var(--wallpaper-size);
+  opacity: var(--wallpaper-opacity);
+}
+
+body[data-org="pa-2026"]::before {
+  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+}
+
+body[data-org="supreme-2027"]::before {
+  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
+}
+
+
+/* Make sure real content stays above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle {
+  position: relative;
+  z-index: 1;
+}
+
+/* Optional: Don’t show wallpaper when printing */
+@media print {
+  body::before { display:none; }
+}
+
