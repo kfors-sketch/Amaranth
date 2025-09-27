@@ -334,12 +334,30 @@ async function checkout(){
   const dn=document.getElementById('donation-amount'); 
   const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
 
-  // send store_notes so corsage style/custom can appear on Stripe (tiny API tweak needed)
-  const body={ org:STATE.org, order:{ purchaser, attendees:STATE.attendees, store:STATE.store, store_notes:STATE.storeNotes, extra_donation_cents } };
+  // 🔹 ADDED: build priceMap so server knows store item prices
+  const priceMap = {};
+  (STATE.products.items || []).forEach(p => {
+    priceMap[p.handle] = Number(p.price_cents || 0);
+  });
+
+  // send store_notes so corsage style/custom can appear on Stripe
+  const body={ 
+    org:STATE.org, 
+    order:{ 
+      purchaser, 
+      attendees:STATE.attendees, 
+      store:STATE.store, 
+      store_notes:STATE.storeNotes, 
+      extra_donation_cents,
+      store_price_cents_map: priceMap   // 🔹 ADDED: include store prices
+    } 
+  };
 
   try{
     const res=await fetch('/api/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d=await res.json(); if(!d.url) throw new Error(d.error||'Checkout failed'); location.href=d.url;
+    const d=await res.json(); if(!res.ok){ alert('Server error: '+(d.error||res.statusText)); return; }
+    if(!d.url) throw new Error(d.error||'Checkout failed'); 
+    location.href=d.url;
   }catch(e){ alert(e.message); }
 }
 

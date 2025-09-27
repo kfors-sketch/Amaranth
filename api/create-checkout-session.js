@@ -1,121 +1,130 @@
-// /api/create-checkout-session.js (CommonJS)
-const Stripe = require('stripe');
-const fs = require('fs');
-const path = require('path');
+// api/create-checkout-session.js
+// Works on Vercel serverless. Uses amount-in-cents (no Stripe Price IDs needed).
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
+const successBase = process.env.SUCCESS_BASE_URL || 'https://'+process.env.VERCEL_URL;
+const cancelBase  = process.env.CANCEL_BASE_URL  || 'https://'+process.env.VERCEL_URL;
 
-// 👇 Add this helper just after the require/stripe init
-const getBaseUrl = (req) => {
-  if (process.env.PUBLIC_URL) return process.env.PUBLIC_URL.replace(/\/$/, '');
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const proto = req.headers['x-forwarded-proto'] || 'https';
-  return `${proto}://${host}`;
-};
-
-function loadJSON(org, name) {
-  const p = path.join(process.cwd(), 'data', org, name + '.json');
-  return JSON.parse(fs.readFileSync(p, 'utf-8'));
-}
-
-function computeSurcharge(base, settings) {
-  const S = (settings && settings.surcharge) || {};
-  if (!S.enabled) return 0;
-  const P = Number(S.fee_percent || 0), F = Number(S.fee_fixed_cents || 0), CAP = Number(S.cap_percent || 0);
-  if (P <= 0 && F <= 0) return 0;
-  const total = Math.ceil((base + F) / (1 - P));
-  let sur = total - base;
-  if (CAP > 0) {
-    const capByPct = Math.floor(base * CAP);
-    if (sur > capByPct) sur = capByPct;
-  }
-  return sur;
-}
+function money(c){ return `$${(Number(c||0)/100).toFixed(2)}`; }
 
 module.exports = async (req, res) => {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    // 🔑 Environment key check
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      console.error('STRIPE_SECRET_KEY missing for env');
+      return res.status(500).json({ error: 'Stripe key not configured (STRIPE_SECRET_KEY missing).' });
+    }
+
+    const stripe = require('stripe')(key);
+
     const { org, order } = req.body || {};
-    if (!org) return res.status(400).json({ error: 'Missing org' });
-    if (!order) return res.status(400).json({ error: 'Missing order' });
-    if (!process.env.STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Stripe key not configured' });
+    if (!org || !order) {
+      return res.status(400).json({ error: 'Missing org or order in request body.' });
+    }
 
-    const settings = loadJSON(org, 'settings');
-    const products = loadJSON(org, 'products');
-    const banquets = loadJSON(org, 'banquets');
-
-    let line_items = [];
-    const metadata = {
+    const line_items = [];
+    const meta = {
       org,
       purchaser_name: order?.purchaser?.name || '',
-      purchaser_title: order?.purchaser?.title || '',
-      purchaser_phone: order?.purchaser?.phone || '',
       purchaser_email: order?.purchaser?.email || '',
-      attendees_json: JSON.stringify(order?.attendees || []).slice(0, 4999)
     };
 
-    // Tickets
-    const ticketMap = new Map();
-    (banquets.events || []).forEach(ev => (ev.tickets || []).forEach(t => ticketMap.set(t.handle, t)));
-    (order.attendees || []).forEach(att =>
-      (att.selections || []).forEach(sel => {
-        if (sel?.handle && ticketMap.has(sel.handle)) {
-          const price = Number(ticketMap.get(sel.handle).price_cents || 0);
+    // 🧍‍♀️ Attendee tickets
+    (order.attendees || []).forEach((a, ai) => {
+      (a.selections || []).forEach((sel, evIdx) => {
+        if (sel && sel.handle && sel.price_cents > 0) {
+          const title = `Event ${evIdx+1} — ${a.name||('Attendee '+(ai+1))}`;
           line_items.push({
-            price_data: { currency: 'usd', unit_amount: price, product_data: { name: `Ticket (${sel.handle})`, description: `Meal:${sel.meal || ''} | Diet:${sel.dietary || ''}` } },
-            quantity: 1
+            quantity: 1,
+            price_data: {
+              currency: 'usd',
+              unit_amount: Number(sel.price_cents),
+              product_data: {
+                name: title,
+                description: sel.meal ? `Meal: ${sel.meal}` : undefined,
+                metadata: { org, type: 'banquet', evIdx: String(evIdx), attendee_index: String(ai) },
+              },
+            },
           });
-          const s = computeSurcharge(price, settings);
-          if (s > 0) line_items.push({ price_data: { currency: 'usd', unit_amount: s, product_data: { name: 'Card processing fee' } }, quantity: 1 });
         }
-      })
-    );
+      });
 
-    // Store items
-    const byHandle = Object.fromEntries((products.items || []).map(p => [p.handle, p]));
-    if (order.store) {
-      const notes = order.store_notes || {};
-for (let i = 0; i < qty; i++) {
-  line_items.push({
-    price_data: {
-      currency: 'usd',
-      unit_amount: Number(p.price_cents || 0),
-      product_data: {
-        name: p.name,
-        description: notes[h] ? String(notes[h]).slice(0,120) : undefined
+      // Optional per-attendee registration
+      if (a.registration) {
+        const regCents = Number(order?.registration_price_cents || 0); // optional; we’ll also derive from store if needed
+        // If you prefer pulling from products JSON, you can pass it in body; otherwise skip this block.
       }
-    },
-    quantity: 1
-  });
-}
-    }
-
-    // Extra donation (no surcharge by default)
-    if (order.extra_donation_cents && order.extra_donation_cents > 0) {
-      const amt = Number(order.extra_donation_cents || 0);
-      line_items.push({ price_data: { currency: 'usd', unit_amount: amt, product_data: { name: 'Extra Donation' } }, quantity: 1 });
-    }
-
-    const customer = await stripe.customers.create({
-      name: order?.purchaser?.name,
-      email: order?.purchaser?.email,
-      phone: order?.purchaser?.phone,
-      address: order?.purchaser?.address
     });
 
+    // 🛍️ Store items (including directory, corsage, merch)
+    const store = order.store || {};
+    const storeNotes = order.store_notes || {};
+    for (const [handle, qtyRaw] of Object.entries(store)) {
+      const qty = Number(qtyRaw || 0);
+      if (!qty) continue;
+
+      // We need a price in cents for each handle. If you already pass it, great.
+      // If not, include a minimal fallback map here or send price_cents in body for each store item.
+      const priceCentsMap = order.store_price_cents_map || {}; // { handle: cents }
+      const cents = Number(priceCentsMap[handle] || 0);
+      if (!cents) {
+        console.warn('Missing cents for store handle:', handle);
+        return res.status(400).json({ error: `Missing price for ${handle}.` });
+      }
+
+      const descNote = storeNotes[handle] ? `Note: ${storeNotes[handle]}` : undefined;
+      line_items.push({
+        quantity: qty,
+        price_data: {
+          currency: 'usd',
+          unit_amount: cents,
+          product_data: {
+            name: handle,
+            description: descNote,
+            metadata: { org, type: 'store', handle },
+          },
+        },
+      });
+    }
+
+    // 🎁 Extra donation (optional)
+    const dn = Number(order.extra_donation_cents || 0);
+    if (dn > 0) {
+      line_items.push({
+        quantity: 1,
+        price_data: {
+          currency: 'usd',
+          unit_amount: dn,
+          product_data: {
+            name: 'Extra Donation',
+            metadata: { org, type: 'donation' },
+          },
+        },
+      });
+    }
+
+    if (line_items.length === 0) {
+      return res.status(400).json({ error: 'Your cart is empty.' });
+    }
+
+    // ✅ Create session
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer: customer.id,
       line_items,
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      automatic_tax: { enabled: true },
-      payment_intent_data: { metadata }
+      payment_method_types: ['card'],
+      allow_promotion_codes: true,
+      metadata: meta,
+      success_url: `${successBase}/${org}/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${cancelBase}/${org}/order.html?canceled=1`,
     });
 
     return res.status(200).json({ url: session.url });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'Failed to create session' });
+  } catch (err) {
+    console.error('create-checkout-session error:', err);
+    return res.status(500).json({ error: err.message || 'Server error' });
   }
 };
