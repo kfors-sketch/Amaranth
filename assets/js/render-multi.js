@@ -2,6 +2,43 @@ async function getJSON(p){const r=await fetch(p,{cache:'no-store'});if(!r.ok) th
 function money(c){return `$${(c/100).toFixed(2)}`;}
 function currentOrg(){const m=location.pathname.match(/^\/([^\/]+)\//);return m?m[1]:'';}
 
+// ---- Simple Lightbox helpers (Step 1) ----
+function ensureLightbox(){
+  if (document.getElementById('lightbox')) return;
+  const lb = document.createElement('div');
+  lb.id = 'lightbox';
+  lb.innerHTML = `
+    <div class="lb-inner">
+      <button class="lb-close" aria-label="Close">×</button>
+      <img id="lightbox-img" alt="">
+      <div id="lightbox-caption" class="lb-caption"></div>
+    </div>`;
+  document.body.appendChild(lb);
+
+  // close on backdrop or button
+  lb.addEventListener('click', (e)=>{
+    if (e.target.id === 'lightbox' || e.target.classList.contains('lb-close')) {
+      lb.classList.remove('open');
+    }
+  });
+  // close on ESC
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='Escape') lb.classList.remove('open');
+  });
+}
+
+function openLightbox(src, caption){
+  ensureLightbox();
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const cap = document.getElementById('lightbox-caption');
+  img.src = src;
+  img.alt = caption || '';
+  cap.textContent = caption || '';
+  lb.classList.add('open');
+}
+// ---- end Step 1 ----
+
 async function renderGroupHome(){
   const org=currentOrg();
   const homeBanquets=document.getElementById('home-banquets');
@@ -39,10 +76,41 @@ async function renderDirectory(){
 }
 
 async function renderShop(){
-  const org=currentOrg();const data=await getJSON(`/data/${org}/products.json`);
+  const org=currentOrg();
+  const data=await getJSON(`/data/${org}/products.json`);
   const grid=document.getElementById('product-grid');
-  if(grid){grid.innerHTML=(data.items||[]).map(p=>`
-    <div class="card"><h3>${p.name}</h3><p>${p.description||''}</p><div class="price">${money(p.price_cents)}</div></div>`).join('');}
+  if(!grid) return;
+
+  // Helper to pick an image field gracefully
+  const pickImage = (p) => p.image || p.image_url || p.img || (Array.isArray(p.images)&&p.images[0]) || '';
+
+  const cards = (data.items||[]).map(p=>{
+    const imgSrc = pickImage(p);
+    const imgBlock = imgSrc
+      ? `
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>`
+      : '';
+    return `
+      <div class="card">
+        ${imgBlock}
+        <h3 style="margin-top:.5rem;">${p.name}</h3>
+        <p>${p.description||''}</p>
+        <div class="price">${money(p.price_cents)}</div>
+      </div>`;
+  }).join('');
+
+  grid.innerHTML = cards;
+
+  // Event delegation for any zoom buttons
+  grid.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.img-zoom');
+    if(!btn) return;
+    const full = btn.getAttribute('data-full');
+    const label = btn.getAttribute('aria-label') || '';
+    if(full) openLightbox(full, label.replace(/^View\s+/,''));
+  });
 }
 
 // ===== ORDER =====
@@ -84,8 +152,14 @@ async function renderOrder(){
     // renderer for normal product
     const renderItem = (p) => {
       const q=STATE.store[p.handle]||0;
+      const imgSrc = p.image || p.image_url || p.img || (Array.isArray(p.images)&&p.images[0]) || '';
+      const thumb = imgSrc ? `
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>` : '';
       return `
         <div class="card">
+          ${thumb}
           <h3>${p.name}</h3>
           <p>${p.description||''}</p>
           <div class="price">${money(p.price_cents)}</div>
@@ -100,8 +174,14 @@ async function renderOrder(){
       const presets=['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
       const selected=presets.includes(note)?note:(note?'Custom':'Red Roses');
       const customText=(selected==='Custom' && !presets.includes(note))?note:'';
+      const imgSrc = p.image || p.image_url || p.img || (Array.isArray(p.images)&&p.images[0]) || '';
+      const thumb = imgSrc ? `
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>` : '';
       return `
         <div class="card">
+          ${thumb}
           <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
           <p>${p.description||''}</p>
           <div class="grid-3">
@@ -154,6 +234,15 @@ async function renderOrder(){
         if(v===0) delete STATE.store[h]; else STATE.store[h]=v;
         updateTotal();
       });
+    });
+
+    // image zoom delegation inside store list
+    store.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.img-zoom');
+      if(!btn) return;
+      const full = btn.getAttribute('data-full');
+      const label = btn.getAttribute('aria-label') || '';
+      if(full) openLightbox(full, label.replace(/^View\s+/,''));
     });
 
     // corsage handlers (if present)
@@ -285,7 +374,7 @@ function bindAttendeeInputs(){
 
 function updateTotal(){
   let total=0;
-  let feeTotal=0;            // <-- NEW: track all fees in cents
+  let feeTotal=0;            // track all fees in cents
 
   // We'll also build a line-item list for the Summary box
   const lines = [];
