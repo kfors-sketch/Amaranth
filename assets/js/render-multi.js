@@ -2,7 +2,27 @@ async function getJSON(p){const r=await fetch(p,{cache:'no-store'});if(!r.ok) th
 function money(c){return `$${(c/100).toFixed(2)}`;}
 function currentOrg(){const m=location.pathname.match(/^\/([^\/]+)\//);return m?m[1]:'';}
 
-// ---- Simple Lightbox helpers (Step 1) ----
+/* ===== Banquet date formatting (Step 1) ===== */
+function ordinal(n){
+  const s=["th","st","nd","rd"], v=n%100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+function formatBanquetDateTime(iso){
+  if(!iso) return '';
+  const d=new Date(iso);
+  if(isNaN(d)) return '';
+  const weekday = d.toLocaleDateString(undefined,{weekday:'long'});
+  const month = d.toLocaleDateString(undefined,{month:'long'});
+  const day = ordinal(d.getDate());
+  let h=d.getHours(), m=d.getMinutes();
+  const ampm = h>=12 ? 'PM' : 'AM';
+  h = h%12; if(h===0) h=12;
+  const time = m===0 ? `${h} ${ampm}` : `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+  return `${weekday}, ${month} ${day} at ${time}`;
+}
+/* ===== end Step 1 ===== */
+
+/* ---- Simple Lightbox helpers (images) ---- */
 function ensureLightbox(){
   if (document.getElementById('lightbox')) return;
   const lb = document.createElement('div');
@@ -15,18 +35,15 @@ function ensureLightbox(){
     </div>`;
   document.body.appendChild(lb);
 
-  // close on backdrop or button
   lb.addEventListener('click', (e)=>{
     if (e.target.id === 'lightbox' || e.target.classList.contains('lb-close')) {
       lb.classList.remove('open');
     }
   });
-  // close on ESC
   document.addEventListener('keydown',(e)=>{
     if(e.key==='Escape') lb.classList.remove('open');
   });
 }
-
 function openLightbox(src, caption){
   ensureLightbox();
   const lb = document.getElementById('lightbox');
@@ -37,7 +54,7 @@ function openLightbox(src, caption){
   cap.textContent = caption || '';
   lb.classList.add('open');
 }
-// ---- end Step 1 ----
+/* ---- end lightbox ---- */
 
 async function renderGroupHome(){
   const org=currentOrg();
@@ -46,7 +63,11 @@ async function renderGroupHome(){
   if(homeBanquets){
     const banquets=await getJSON(`/data/${org}/banquets.json`);
     homeBanquets.innerHTML=(banquets.events||[]).slice(0,8).map(ev=>`
-      <div class="card"><h3>${ev.title}</h3><p>${new Date(ev.datetime_iso).toLocaleString()}</p><p>${ev.venue||''}</p></div>
+      <div class="card">
+        <h3>${ev.title}</h3>
+        <p>${formatBanquetDateTime(ev.datetime_iso)}</p>
+        <p>${ev.venue||''}</p>
+      </div>
     `).join('');
   }
   if(homeProducts){
@@ -63,7 +84,8 @@ async function renderBanquets(){
   const el=document.getElementById('banquet-list');
   if(el){el.innerHTML=(data.events||[]).map(ev=>`
     <div class="card">
-      <h3>${ev.title}</h3><p><strong>${new Date(ev.datetime_iso).toLocaleString()}</strong> — ${ev.venue||''}</p>
+      <h3>${ev.title}</h3>
+      <p><strong>${formatBanquetDateTime(ev.datetime_iso)}</strong> — ${ev.venue||''}</p>
       ${(ev.tickets||[]).map(t=>`<div class="mt">${t.label} — ${money(t.price_cents)}</div>`).join('')}
       <p class="tiny">Meals: ${(ev.meals||[]).map(m=>m.label).join(', ')}</p>
     </div>`).join('');}
@@ -81,7 +103,6 @@ async function renderShop(){
   const grid=document.getElementById('product-grid');
   if(!grid) return;
 
-  // Helper to pick an image field gracefully
   const pickImage = (p) => p.image || p.image_url || p.img || (Array.isArray(p.images)&&p.images[0]) || '';
 
   const cards = (data.items||[]).map(p=>{
@@ -103,7 +124,6 @@ async function renderShop(){
 
   grid.innerHTML = cards;
 
-  // Event delegation for any zoom buttons
   grid.addEventListener('click', (e)=>{
     const btn = e.target.closest('.img-zoom');
     if(!btn) return;
@@ -122,7 +142,6 @@ function surchargeOf(base){
   if(CAP>0){const capPct=Math.floor(base*CAP); if(sur>capPct) sur=capPct;} return sur;
 }
 
-// Registration price helper (from products)
 function regPriceCents(){
   const p=(STATE.products.items||[]).find(x=>x.handle==='registration');
   return p ? Number(p.price_cents||0) : 0;
@@ -140,16 +159,13 @@ async function renderOrder(){
   document.getElementById('add-attendee')?.addEventListener('click', addAttendee);
   addAttendee();
 
-  // ----- Add Items (store) -----
   const store=document.getElementById('store-list');
   if(store){
-    // classify into Event add-ons vs Merchandise
-    const addonsHandles = new Set(['directory','corsage']); // adjust if your directory handle differs
+    const addonsHandles = new Set(['directory','corsage']);
     const items = (products.items||[]);
     const addons = items.filter(p => addonsHandles.has(p.handle) && p.handle!=='registration');
     const merch  = items.filter(p => !addonsHandles.has(p.handle) && p.handle!=='registration');
 
-    // renderer for normal product
     const renderItem = (p) => {
       const q=STATE.store[p.handle]||0;
       const imgSrc = p.image || p.image_url || p.img || (Array.isArray(p.images)&&p.images[0]) || '';
@@ -167,7 +183,6 @@ async function renderOrder(){
         </div>`;
     };
 
-    // special renderer for corsage product
     const renderCorsage = (p) => {
       const qty=STATE.store['corsage']||0;
       const note=STATE.storeNotes['corsage']||'';
@@ -207,7 +222,6 @@ async function renderOrder(){
     const addonsHTML = addons.map(p => p.handle==='corsage' ? renderCorsage(p) : renderItem(p)).join('');
     const merchHTML  = merch.map(renderItem).join('');
 
-    // >>> Ensured stacking: merchandise is below add-ons <<<
     store.innerHTML = `
       <div class="store-sections">
         <section class="card store-addons">
@@ -226,7 +240,6 @@ async function renderOrder(){
       </div>
     `;
 
-    // qty handlers for normal items (both sections)
     document.querySelectorAll('.store-qty').forEach(inp=>{
       inp.addEventListener('input',e=>{
         const h=e.target.getAttribute('data-handle');
@@ -236,7 +249,6 @@ async function renderOrder(){
       });
     });
 
-    // image zoom delegation inside store list
     store.addEventListener('click', (e)=>{
       const btn = e.target.closest('.img-zoom');
       if(!btn) return;
@@ -245,7 +257,6 @@ async function renderOrder(){
       if(full) openLightbox(full, label.replace(/^View\s+/,''));
     });
 
-    // corsage handlers (if present)
     const cq=document.getElementById('corsage-qty');
     const cs=document.getElementById('corsage-style');
     const cc=document.getElementById('corsage-custom');
@@ -294,7 +305,7 @@ function attendeeCard(i){
   const blocks=evs.map((ev,idx)=>{
     const tickets=(ev.tickets||[]).map(t=>`<option value="${t.handle}|${t.price_cents}">${ev.title} — ${t.label} — ${money(t.price_cents)}</option>`).join('');
     const meals=(ev.meals||[]).map(m=>`<option value="${m.code}">${m.label}</option>`).join('');
-    return `<div class="card mt"><h4>${ev.title} — ${new Date(ev.datetime_iso).toLocaleString()}</h4>
+    return `<div class="card mt"><h4>${ev.title} — ${formatBanquetDateTime(ev.datetime_iso)}</h4>
       <div class="grid-3">
         <label>Ticket<select class="ticket" data-i="${i}" data-ev="${idx}"><option value="">-- none --</option>${tickets}</select></label>
         <label>Meal<select class="meal" data-i="${i}" data-ev="${idx}">${meals}</select></label>
@@ -302,7 +313,6 @@ function attendeeCard(i){
       </div></div>`;
   }).join('');
 
-  // Per-attendee Registration callout (styled)
   const checked = STATE.attendees[i]?.registration ? ' checked' : '';
   const activeClass = STATE.attendees[i]?.registration ? ' active' : '';
   const regBlock = `
@@ -357,7 +367,6 @@ function bindAttendeeInputs(){
   document.querySelectorAll('.meal').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].meal=e.target.value;}));
   document.querySelectorAll('.diet').forEach(inp=>inp.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i'));const ev=Number(e.target.getAttribute('data-ev')); if(!STATE.attendees[i].selections[ev]) STATE.attendees[i].selections[ev]={}; STATE.attendees[i].selections[ev].dietary=e.target.value;}));
 
-  // Enhanced registration toggle: update state + visual class
   document.querySelectorAll('.a-register').forEach(chk=>{
     const box = chk.closest('.reg-box');
     const i = Number(chk.getAttribute('data-i'));
@@ -367,16 +376,14 @@ function bindAttendeeInputs(){
       updateTotal();
     };
     chk.addEventListener('change', sync);
-    // initialize visuals based on current state
     sync();
   });
 }
 
 function updateTotal(){
   let total=0;
-  let feeTotal=0;            // track all fees in cents
+  let feeTotal=0;
 
-  // We'll also build a line-item list for the Summary box
   const lines = [];
   const pushLine = (label, cents) => {
     lines.push(`<li class="line" style="display:flex;justify-content:space-between;gap:1rem;">
@@ -384,7 +391,6 @@ function updateTotal(){
     </li>`);
   };
 
-  // banquet tickets (per attendee, per event selection)
   const evs = STATE.banquets.events || [];
   STATE.attendees.forEach(a=>{
     (a.selections||[]).forEach((sel, evIdx)=>{
@@ -402,7 +408,6 @@ function updateTotal(){
     });
   });
 
-  // per-attendee registration (optional)
   const regCents = regPriceCents();
   if(regCents>0){
     STATE.attendees.forEach(a=>{
@@ -417,7 +422,6 @@ function updateTotal(){
     });
   }
 
-  // store items (directory + corsage + merch)
   const items = STATE.products.items || [];
   items.forEach(p=>{
     const q=Number(STATE.store[p.handle]||0);
@@ -429,7 +433,6 @@ function updateTotal(){
         feeTotal += fee;
         total += line;
 
-        // attach corsage note if present
         let label = p.name;
         if(p.handle==='corsage' && STATE.storeNotes['corsage']){
           label += ` — ${STATE.storeNotes['corsage']}`;
@@ -439,7 +442,6 @@ function updateTotal(){
     }
   });
 
-  // donation (ALWAYS include surcharge on donation)
   const dn=document.getElementById('donation-amount'); 
   const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
   if(dnCents>0){ 
@@ -450,11 +452,9 @@ function updateTotal(){
     pushLine('Extra Donation', line);
   }
 
-  // update Total
   const el=document.getElementById('order-total'); 
   if(el) el.textContent=money(total);
 
-  // render the line items into #order-lines (if present)
   const linesEl = document.getElementById('order-lines');
   if (linesEl) {
     if (lines.length === 0) {
@@ -464,7 +464,6 @@ function updateTotal(){
     }
   }
 
-  // Show the actual combined fee amount (separate from the equation)
   const feesEl = document.getElementById('fees-line');
   if (feesEl) {
     const s = STATE.settings?.surcharge || {};
@@ -499,13 +498,11 @@ async function checkout(){
   const dn=document.getElementById('donation-amount'); 
   const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
 
-  // build priceMap so server knows store item prices
   const priceMap = {};
   (STATE.products.items || []).forEach(p => {
     priceMap[p.handle] = Number(p.price_cents || 0);
   });
 
-  // send store_notes so corsage style/custom can appear on Stripe
   const body={ 
     org:STATE.org, 
     order:{ 
@@ -527,7 +524,6 @@ async function checkout(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-  // Set data-org on <body> so org-specific wallpaper works
   const org = currentOrg();
   if (org) document.body.setAttribute('data-org', org);
 
