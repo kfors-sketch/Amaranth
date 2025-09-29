@@ -142,9 +142,19 @@ function surchargeOf(base){
   if(CAP>0){const capPct=Math.floor(base*CAP); if(sur>capPct) sur=capPct;} return sur;
 }
 
+// Registration price helper (from products)
 function regPriceCents(){
   const p=(STATE.products.items||[]).find(x=>x.handle==='registration');
   return p ? Number(p.price_cents||0) : 0;
+}
+
+// Helper: cutoff
+function getCutoffInfo(settings){
+  const iso = settings?.orders?.cutoff_iso;
+  if(!iso) return {active:false, date:null};
+  const d=new Date(iso);
+  if(isNaN(d)) return {active:false, date:null};
+  return {active:(new Date()>d), date:d};
 }
 
 async function renderOrder(){
@@ -154,16 +164,43 @@ async function renderOrder(){
     getJSON(`/data/${org}/banquets.json`),
     getJSON(`/data/${org}/settings.json`)
   ]);
-  STATE={org, attendees:[], store:{}, storeNotes:{}, products, banquets, settings};
+  const cutoff = getCutoffInfo(settings);
+  STATE={org, attendees:[], store:{}, storeNotes:{}, products, banquets, settings, cutoff};
 
-  document.getElementById('add-attendee')?.addEventListener('click', addAttendee);
-  addAttendee();
+  // Attendees section
+  const addBtn = document.getElementById('add-attendee');
+  if(addBtn){
+    if(cutoff.active){
+      addBtn.disabled = true;
+      addBtn.title = 'Ordering for banquet tickets & registration is closed.';
+    }else{
+      addBtn.addEventListener('click', addAttendee);
+      addAttendee();
+    }
+  }
+  // If cutoff is active, show a notice in the attendees panel
+  if(cutoff.active){
+    const attWrap = document.getElementById('attendee-list');
+    if(attWrap){
+      const when = cutoff.date ? cutoff.date.toLocaleString() : 'the cutoff date';
+      attWrap.innerHTML = `
+        <div class="card">
+          <h3>Banquet tickets & registration</h3>
+          <p>Ordering is closed as of <strong>${when}</strong>.</p>
+        </div>`;
+    }
+  }else{
+    // if not closed, ensure there's at least one attendee
+    if(!STATE.attendees.length) addAttendee();
+  }
 
+  // ----- Add Items (store) -----
   const store=document.getElementById('store-list');
   if(store){
-    const addonsHandles = new Set(['directory','corsage']);
+    const addonsHandles = new Set(['directory','corsage']); // non-merch
     const items = (products.items||[]);
-    const addons = items.filter(p => addonsHandles.has(p.handle) && p.handle!=='registration');
+    // Respect cutoff: hide add-ons after cutoff; merchandise always allowed
+    const addons = cutoff.active ? [] : items.filter(p => addonsHandles.has(p.handle) && p.handle!=='registration');
     const merch  = items.filter(p => !addonsHandles.has(p.handle) && p.handle!=='registration');
 
     const renderItem = (p) => {
@@ -219,27 +256,31 @@ async function renderOrder(){
         </div>`;
     };
 
-    const addonsHTML = addons.map(p => p.handle==='corsage' ? renderCorsage(p) : renderItem(p)).join('');
-    const merchHTML  = merch.map(renderItem).join('');
+    const addonsHTML = addons.length
+      ? addons.map(p => p.handle==='corsage' ? renderCorsage(p) : renderItem(p)).join('')
+      : `<div class="tiny">Event add-ons ordering is closed${cutoff.date?` as of ${cutoff.date.toLocaleString()}`:''}.</div>`;
+
+    const merchHTML  = merch.map(renderItem).join('') || '<div class="tiny">No merchandise available.</div>';
 
     store.innerHTML = `
       <div class="store-sections">
         <section class="card store-addons">
           <h2>Event add-ons</h2>
           <div class="grid-2">
-            ${addonsHTML || '<div class="tiny">No add-ons available.</div>'}
+            ${addonsHTML}
           </div>
         </section>
 
         <section class="card store-merch" style="margin-top:24px">
           <h2>Merchandise</h2>
           <div class="grid-3">
-            ${merchHTML || '<div class="tiny">No merchandise available.</div>'}
+            ${merchHTML}
           </div>
         </section>
       </div>
     `;
 
+    // qty handlers for normal items (both sections)
     document.querySelectorAll('.store-qty').forEach(inp=>{
       inp.addEventListener('input',e=>{
         const h=e.target.getAttribute('data-handle');
@@ -249,6 +290,7 @@ async function renderOrder(){
       });
     });
 
+    // image zoom delegation inside store list
     store.addEventListener('click', (e)=>{
       const btn = e.target.closest('.img-zoom');
       if(!btn) return;
@@ -257,43 +299,56 @@ async function renderOrder(){
       if(full) openLightbox(full, label.replace(/^View\s+/,''));
     });
 
-    const cq=document.getElementById('corsage-qty');
-    const cs=document.getElementById('corsage-style');
-    const cc=document.getElementById('corsage-custom');
-    function syncCorsage(){
-      if(!cq||!cs||!cc) return;
-      const qty=Math.max(0,Number(cq.value||0));
-      const style=cs.value;
-      const custom=(cc.value||'').trim();
-      if(qty>0){
-        STATE.store['corsage']=qty;
-        STATE.storeNotes['corsage']=(style==='Custom')?(custom||'Custom'):style;
-      }else{
-        delete STATE.store['corsage'];
-        delete STATE.storeNotes['corsage'];
-      }
-      updateTotal();
+    // If cutoff, delete any lingering addon selections from prior state
+    if(cutoff.active){
+      ['directory','corsage'].forEach(h=>{ delete STATE.store[h]; delete STATE.storeNotes[h]; });
     }
-    cq?.addEventListener('input',syncCorsage);
-    cs?.addEventListener('change',syncCorsage);
-    cc?.addEventListener('input',syncCorsage);
+
+    // corsage handlers (if present and not cutoff)
+    if(!cutoff.active){
+      const cq=document.getElementById('corsage-qty');
+      const cs=document.getElementById('corsage-style');
+      const cc=document.getElementById('corsage-custom');
+      function syncCorsage(){
+        if(!cq||!cs||!cc) return;
+        const qty=Math.max(0,Number(cq.value||0));
+        const style=cs.value;
+        const custom=(cc.value||'').trim();
+        if(qty>0){
+          STATE.store['corsage']=qty;
+          STATE.storeNotes['corsage']=(style==='Custom')?(custom||'Custom'):style;
+        }else{
+          delete STATE.store['corsage'];
+          delete STATE.storeNotes['corsage'];
+        }
+        updateTotal();
+      }
+      cq?.addEventListener('input',syncCorsage);
+      cs?.addEventListener('change',syncCorsage);
+      cc?.addEventListener('input',syncCorsage);
+    }
   }
 
   // ----- Donation -----
   const donateWrap=document.getElementById('extra-donation');
-  if(donateWrap && settings.donations?.allow_extra_on_order){
-    donateWrap.innerHTML=`<p>${settings.donations.purpose_text||''}</p>
-      <div id="donation-quick"></div>
-      <label>Custom amount (USD) <input type="number" id="donation-amount" min="0" step="1" value="${settings.donations.default_amount||0}"></label>`;
-    const quick=donateWrap.querySelector('#donation-quick');
-    if(quick){
-      quick.innerHTML=(settings.donations.suggested||[]).map(v=>`<button class="btn" data-dn="${v}">$${v}</button>`).join(' ');
-      quick.querySelectorAll('[data-dn]').forEach(b=>b.addEventListener('click',e=>{
-        const val=Number(e.currentTarget.getAttribute('data-dn')||0);
-        const inp=document.getElementById('donation-amount'); if(inp) inp.value=val; updateTotal();
-      }));
+  if(donateWrap){
+    if(settings.donations?.allow_extra_on_order && !cutoff.active){
+      donateWrap.innerHTML=`<p>${settings.donations.purpose_text||''}</p>
+        <div id="donation-quick"></div>
+        <label>Custom amount (USD) <input type="number" id="donation-amount" min="0" step="1" value="${settings.donations.default_amount||0}"></label>`;
+      const quick=donateWrap.querySelector('#donation-quick');
+      if(quick){
+        quick.innerHTML=(settings.donations.suggested||[]).map(v=>`<button class="btn" data-dn="${v}">$${v}</button>`).join(' ');
+        quick.querySelectorAll('[data-dn]').forEach(b=>b.addEventListener('click',e=>{
+          const val=Number(e.currentTarget.getAttribute('data-dn')||0);
+          const inp=document.getElementById('donation-amount'); if(inp) inp.value=val; updateTotal();
+        }));
+      }
+      donateWrap.querySelector('#donation-amount')?.addEventListener('input', updateTotal);
+    }else{
+      const when = cutoff.date ? cutoff.date.toLocaleString() : 'the cutoff date';
+      donateWrap.innerHTML = `<div class="tiny">Donations through this form are closed as of <strong>${when}</strong>.</div>`;
     }
-    donateWrap.querySelector('#donation-amount')?.addEventListener('input', updateTotal);
   }
 
   document.getElementById('checkout')?.addEventListener('click', checkout);
@@ -329,6 +384,17 @@ function attendeeCard(i){
       </label>
     </div>`;
 
+  // If cutoff is active, return a compact, read-only card
+  if(STATE.cutoff?.active){
+    const when = STATE.cutoff.date ? STATE.cutoff.date.toLocaleString() : 'the cutoff date';
+    return `<div class="card mt" id="att-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3>Attendee ${i+1}</h3><button class="btn" onclick="removeAttendee(${i})" disabled title="Closed">Remove</button>
+      </div>
+      <div class="tiny">Banquet tickets & registration are closed as of ${when}.</div>
+    </div>`;
+  }
+
   return `<div class="card mt" id="att-${i}">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <h3>Attendee ${i+1}</h3><button class="btn" onclick="removeAttendee(${i})">Remove</button>
@@ -344,11 +410,18 @@ function attendeeCard(i){
 }
 
 function renderAttendees(){
-  document.getElementById('attendee-list').innerHTML=STATE.attendees.map((a,i)=>attendeeCard(i)).join('');
+  const wrap = document.getElementById('attendee-list');
+  if(!wrap) return;
+  if(STATE.cutoff?.active){
+    // nothing to render (we already placed a notice in renderOrder)
+    return;
+  }
+  wrap.innerHTML=STATE.attendees.map((a,i)=>attendeeCard(i)).join('');
   bindAttendeeInputs();
 }
 
 function addAttendee(){
+  if(STATE.cutoff?.active) return;
   STATE.attendees.push({name:'',email:'',title:'',selections:[], registration:false});
   renderAttendees();
 }
@@ -360,6 +433,7 @@ function removeAttendee(i){
 }
 
 function bindAttendeeInputs(){
+  if(STATE.cutoff?.active) return; // inputs disabled when closed
   document.querySelectorAll('.a-name').forEach(el=>el.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].name=e.target.value;}));
   document.querySelectorAll('.a-email').forEach(el=>el.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].email=e.target.value;}));
   document.querySelectorAll('.a-title').forEach(el=>el.addEventListener('input',e=>{const i=Number(e.target.getAttribute('data-i')); STATE.attendees[i].title=e.target.value;}));
@@ -391,39 +465,46 @@ function updateTotal(){
     </li>`);
   };
 
-  const evs = STATE.banquets.events || [];
-  STATE.attendees.forEach(a=>{
-    (a.selections||[]).forEach((sel, evIdx)=>{
-      if(sel?.handle){
-        const ev = evs[evIdx];
-        const t = (ev?.tickets||[]).find(x=>x.handle===sel.handle);
-        const label = `${a.name||'Attendee'} — ${ev?.title||'Event'} — ${(t?.label)||'Ticket'}`;
-        const base = Number(sel.price_cents||t?.price_cents||0);
-        const fee  = surchargeOf(base);
-        const line = base + fee;
-        feeTotal += fee;
-        total += line;
-        pushLine(label, line);
-      }
-    });
-  });
-
-  const regCents = regPriceCents();
-  if(regCents>0){
+  // banquet tickets & registration only when not cutoff
+  if(!STATE.cutoff?.active){
+    const evs = STATE.banquets.events || [];
     STATE.attendees.forEach(a=>{
-      if(a.registration){
-        const base = regCents;
-        const fee  = surchargeOf(base);
-        const line = base + fee;
-        feeTotal += fee;
-        total += line;
-        pushLine(`${a.name||'Attendee'} — Registration`, line);
-      }
+      (a.selections||[]).forEach((sel, evIdx)=>{
+        if(sel?.handle){
+          const ev = evs[evIdx];
+          const t = (ev?.tickets||[]).find(x=>x.handle===sel.handle);
+          const label = `${a.name||'Attendee'} — ${ev?.title||'Event'} — ${(t?.label)||'Ticket'}`;
+          const base = Number(sel.price_cents||t?.price_cents||0);
+          const fee  = surchargeOf(base);
+          const line = base + fee;
+          feeTotal += fee;
+          total += line;
+          pushLine(label, line);
+        }
+      });
     });
+
+    const regCents = regPriceCents();
+    if(regCents>0){
+      STATE.attendees.forEach(a=>{
+        if(a.registration){
+          const base = regCents;
+          const fee  = surchargeOf(base);
+          const line = base + fee;
+          feeTotal += fee;
+          total += line;
+          pushLine(`${a.name||'Attendee'} — Registration`, line);
+        }
+      });
+    }
   }
 
+  // store items
   const items = STATE.products.items || [];
   items.forEach(p=>{
+    const isAddon = (p.handle==='directory' || p.handle==='corsage');
+    if(STATE.cutoff?.active && isAddon) return; // skip add-ons after cutoff
+
     const q=Number(STATE.store[p.handle]||0);
     if(q>0){
       for(let i=0;i<q;i++){
@@ -442,8 +523,9 @@ function updateTotal(){
     }
   });
 
+  // donation (skip after cutoff)
   const dn=document.getElementById('donation-amount'); 
-  const dnCents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
+  const dnCents=(dn && !STATE.cutoff?.active)?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
   if(dnCents>0){ 
     const fee  = surchargeOf(dnCents);
     const line = dnCents + fee;
@@ -478,6 +560,19 @@ function updateTotal(){
 }
 
 async function checkout(){
+  // Guard: if cutoff, prevent any non-merch from sneaking through
+  if(STATE.cutoff?.active){
+    const hasAttendeeStuff = (STATE.attendees||[]).some(a=>{
+      if(a.registration) return true;
+      return (a.selections||[]).some(sel=>!!sel?.handle);
+    });
+    const hasAddons = ['directory','corsage'].some(h=> (STATE.store[h]||0) > 0);
+    if(hasAttendeeStuff || hasAddons){
+      alert('Ordering for tickets, registration, add-ons, and donations is closed.');
+      return;
+    }
+  }
+
   const purchaser={
     name:document.getElementById('p_name').value.trim(),
     title:document.getElementById('p_title').value.trim(),
@@ -496,7 +591,7 @@ async function checkout(){
     alert('Please complete purchaser info.'); return;
   }
   const dn=document.getElementById('donation-amount'); 
-  const extra_donation_cents=dn?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
+  const extra_donation_cents=(!STATE.cutoff?.active && dn)?Math.max(0,Math.round(Number(dn.value||0)*100)):0;
 
   const priceMap = {};
   (STATE.products.items || []).forEach(p => {
@@ -507,9 +602,13 @@ async function checkout(){
     org:STATE.org, 
     order:{ 
       purchaser, 
-      attendees:STATE.attendees, 
-      store:STATE.store, 
-      store_notes:STATE.storeNotes, 
+      attendees:STATE.cutoff?.active ? [] : STATE.attendees, 
+      store:Object.fromEntries(Object.entries(STATE.store||{}).filter(([h,v])=>{
+        // strip add-ons after cutoff; keep merchandise
+        if(STATE.cutoff?.active && (h==='directory'||h==='corsage')) return false;
+        return v>0;
+      })), 
+      store_notes:STATE.cutoff?.active ? {} : STATE.storeNotes, 
       extra_donation_cents,
       store_price_cents_map: priceMap
     } 
