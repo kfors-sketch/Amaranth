@@ -9,7 +9,7 @@
     "enabled": true,
     "fee_percent": 0.029,
     "fee_fixed_cents": 30,
-    "cap_percent": 0.03
+    "cap_percent": 0.00
   },
   "donations": {
     "purpose_text": "Support programs and session activities.",
