@@ -56,7 +56,7 @@ a:hover{text-decoration:underline}
     box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
     display:none;flex-direction:column;z-index:30
   }
-  .nav.open{display:flex}
+  .nav.open{display:flex !important;}
   .nav a{padding:.75rem;border-radius:.5rem}
 }
 
