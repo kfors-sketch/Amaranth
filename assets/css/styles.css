@@ -38,8 +38,8 @@ a:hover{text-decoration:underline}
    Hamburger / Dropdown Nav
    ========================= */
 .nav{
-    /* MODIFIED: Always hide the full link list */
-    display:none !important; 
+    /* 🛠️ MODIFIED: Change to 'display: none' (not !important) to hide the full list */
+    display: none; 
     gap:.5rem;
     align-items:center
 }
@@ -48,8 +48,8 @@ a:hover{text-decoration:underline}
 
 /* Hamburger button (visible on all screens) */
 .nav-toggle{
-    /* MODIFIED: Always show the hamburger button */
-    display:block !important; 
+    /* 🛠️ MODIFIED: Change to 'display: block' (not !important) to show the button */
+    display:block; 
     border:1px solid #e5e7eb;
     background:#fff;
     border-radius:.5rem;
@@ -61,14 +61,15 @@ a:hover{text-decoration:underline}
 
 /* Mobile dropdown */
 @media (max-width:900px){
-  /* .nav-toggle{display:block} IS NOW REDUNDANT AND REMOVED */
+  /* .nav-toggle{display:block} is removed as it's set above */
   .nav{
     position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
     background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
     box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
     display:none;flex-direction:column;z-index:30
   }
-  .nav.open{display:flex !important;}
+  /* 🛠️ MODIFIED: Removed !important here. The CSS should handle this without it */
+  .nav.open{display:flex;} 
   .nav a{padding:.75rem;border-radius:.5rem}
 }
 
@@ -95,4 +96,36 @@ a:hover{text-decoration:underline}
    ========================= */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');  /* default image */
-  --wallpaper-opacity:
+  --wallpaper-opacity: 0.12;                          /* nice and subtle */
+  --wallpaper-size: cover;
+  --wallpaper-repeat: no-repeat;
+  --wallpaper-position: center center;
+}
+
+body{position:relative}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:var(--wallpaper-url);
+  background-position:var(--wallpaper-position);
+  background-repeat:var(--wallpaper-repeat);
+  background-size:var(--wallpaper-size);
+  opacity:var(--wallpaper-opacity);
+}
+
+/* Per-org wallpaper overrides */
+body[data-org="pa-2026"]::before{
+  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+}
+body[data-org="supreme-2027"]::before{
+  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
+}
+
+/* Keep real content above wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer{
+  position:relative;z-index:1
+}
+
+/* Printing: hide wallpaper for clarity */
+@media print{
+  body::before{display:none}
+}
