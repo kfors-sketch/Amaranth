@@ -35,24 +35,24 @@ a:hover{text-decoration:underline}
 .form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
 
 /* =========================
-   Hamburger / Dropdown Nav (Applies to ALL screen sizes)
+   Hamburger / Dropdown Nav
    ========================= */
 .nav{
-    /* 🛠️ FIX 1: Set dropdown positioning for all screens (hidden by default) */
+    /* Default state: hidden and positioned as a mobile dropdown on all screens */
     position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
     background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
     box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
     flex-direction:column;z-index:30;
-    /* Crucial: This hides the menu on ALL screens unless .open is added */
+    /* 🛠️ FIX 1: Ensures menu is hidden by default on ALL screens */
     display: none; 
 }
-.nav a{display:inline-block;padding:.5rem .75rem;border-radius:.5rem;color:#1f2937}
+.nav a{display:block;padding:.75rem;border-radius:.5rem;color:#1f2937}
 .nav a:hover{background:#f3f4f6;text-decoration:none}
 
-/* 🛠️ FIX 2: Move .nav.open rule OUTSIDE the media query. This makes the dropdown work on desktop. */
+/* 🛠️ FIX 2: This rule is globally available and makes the menu appear when clicked */
 .nav.open{display:flex;} 
 
-/* Hamburger button (visible on all screens) */
+/* Hamburger button: always visible */
 .nav-toggle{
     display:block; 
     border:1px solid #e5e7eb;
@@ -64,11 +64,7 @@ a:hover{text-decoration:underline}
     cursor:pointer
 }
 
-/* Mobile/small screen adjustments */
-@media (max-width:900px){
-  .nav a{padding:.75rem;border-radius:.5rem}
-}
-/* Desktop/large screen adjustments (makes dropdown narrower and right-aligned) */
+/* Desktop adjustment: makes the dropdown smaller and right-aligned */
 @media (min-width:901px){ 
     .nav {
         right: 0;
