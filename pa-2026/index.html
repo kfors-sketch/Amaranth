@@ -1,123 +1,90 @@
 <!doctype html><html lang="en"><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session">
-  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/css/styles.css">
-  <title>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <title>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</title>
 
-  <!-- Minimal styles to make the hamburger dropdown work even without CSS changes -->
-  <style>
-    .site-header { position: relative; z-index: 100; }
-    .header-inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-    .logo { display:flex; align-items:center; gap:.6rem; text-decoration:none; }
-    .logo img { height:40px; width:auto; }
-    .nav { display:flex; gap:1rem; }
-    .nav a { text-decoration:none; }
-    .nav-toggle { display:none; font-size:1.5rem; line-height:1; background:none; border:0; cursor:pointer; }
+    <style>
+    .site-header { position: relative; z-index: 100; }
+    .header-inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .logo { display:flex; align-items:center; gap:.6rem; text-decoration:none; }
+    .logo img { height:40px; width:auto; }
+    .nav { display:flex; gap:1rem; }
+    .nav a { text-decoration:none; }
+    .nav-toggle { display:none; font-size:1.5rem; line-height:1; background:none; border:0; cursor:pointer; }
 
-    /* Mobile dropdown behavior */
-    @media (max-width: 900px) {
-      .nav-toggle { display:block; }
-      .nav {
-        display:none;
-        position:absolute;
-        top:100%;
-        right:0;
-        min-width: 220px;
-        padding:.5rem;
-        margin-top:.25rem;
-        border-radius:.75rem;
-        background: rgba(255,255,255,0.98);
-        box-shadow: 0 10px 30px rgba(0,0,0,.12);
-        flex-direction:column;
-      }
-      /* If your site is dark, swap the bg above and uncomment:
-         background: rgba(20,20,24,0.98); color:#fff; */
-      .nav.open { display:flex; }
-      .nav a { padding:.6rem .8rem; border-radius:.5rem; }
-      .nav a:hover { background: rgba(0,0,0,.05); }
-      body[data-theme="dark"] .nav a:hover { background: rgba(255,255,255,.08); }
-    }
-  </style>
+    /* Mobile dropdown behavior */
+    @media (max-width: 900px) {
+      .nav-toggle { display:block; }
+      .nav {
+        display:none;
+        position:absolute;
+        top:100%;
+        right:0;
+        min-width: 220px;
+        padding:.5rem;
+        margin-top:.25rem;
+        border-radius:.75rem;
+        background: rgba(255,255,255,0.98);
+        box-shadow: 0 10px 30px rgba(0,0,0,.12);
+        flex-direction:column;
+      }
+      /* If your site is dark, swap the bg above and uncomment:
+         background: rgba(20,20,24,0.98); color:#fff; */
+      .nav.open { display:flex; }
+      .nav a { padding:.6rem .8rem; border-radius:.5rem; }
+      .nav a:hover { background: rgba(0,0,0,.05); }
+      body[data-theme="dark"] .nav a:hover { background: rgba(255,255,255,.08); }
+    }
+  </style>
 </head>
 <body>
 <header class="site-header">
-  <div class="container header-inner">
-    <a class="logo" href="/pa-2026/">
-      <img src="/assets/img/logo.svg" alt="logo">
-      <span>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</span>
-    </a>
+  <div class="container header-inner">
+    <a class="logo" href="/pa-2026/">
+      <img src="/assets/img/logo.svg" alt="logo">
+      <span>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</span>
+    </a>
 
-    <!-- NAVIGATION (now includes a link to Home 2) -->
-    <nav id="nav" class="nav" aria-label="Primary">
-      <a href="/pa-2026/">Home</a>
-      <a href="/pa-2026/home2.html">Home 2</a>
-      <a href="/pa-2026/banquets.html">Banquets</a>
-      <a href="/pa-2026/registration.html">Registration</a>
-      <a href="/pa-2026/directory.html">Directory</a>
-      <a href="/pa-2026/shop.html">Shop</a>
-      <a href="/pa-2026/order.html">Order</a>
-    </nav>
+        <nav id="nav" class="nav" aria-label="Primary">
+      <a href="/pa-2026/">Home</a>
+      <a href="/pa-2026/home2.html">Home 2</a>
+      <a href="/pa-2026/banquets.html">Banquets</a>
+      <a href="/pa-2026/registration.html">Registration</a>
+      <a href="/pa-2026/directory.html">Directory</a>
+      <a href="/pa-2026/shop.html">Shop</a>
+      <a href="/pa-2026/order.html">Order</a>
+    </nav>
 
-    <!-- HAMBURGER -->
-    <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav">☰</button>
-  </div>
+        <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav">☰</button>
+  </div>
 </header>
 
 <section class="hero">
-  <div class="container hero-inner">
-    <h1>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</h1>
-    <p>Welcome!</p>
-    <div class="hero-cta"><a class="btn btn-primary" href="./order.html">Start Order</a></div>
-  </div>
+  <div class="container hero-inner">
+    <h1>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</h1>
+    <p>Welcome!</p>
+    <div class="hero-cta"><a class="btn btn-primary" href="./order.html">Start Order</a></div>
+  </div>
 </section>
 
 <section class="container mt-lg">
-  <h2>Upcoming Banquets</h2>
-  <div id="home-banquets" class="grid-3"></div>
+  <h2>Upcoming Banquets</h2>
+  <div id="home-banquets" class="grid-3"></div>
 </section>
 
 <section class="container mt-lg">
-  <h2>Featured Items</h2>
-  <div id="home-products" class="grid-3"></div>
+  <h2>Featured Items</h2>
+  <div id="home-products" class="grid-3"></div>
 </section>
 
 <footer class="site-footer">
-  <div class="container tiny">© 2025</div>
+  <div class="container tiny">© 2025</div>
 </footer>
 
 <script src="/assets/js/main.js" defer></script>
 <script src="/assets/js/render-multi.js" defer></script>
 
-<!-- Small script to drive the dropdown behavior -->
-<script>
-  (function(){
-    const btn = document.getElementById('navToggle');
-    const nav = document.getElementById('nav');
-    if(!btn || !nav) return;
-
-    const close = () => { nav.classList.remove('open'); btn.setAttribute('aria-expanded','false'); };
-    const open = () => { nav.classList.add('open'); btn.setAttribute('aria-expanded','true'); };
-
-    btn.addEventListener('click', ()=>{
-      if(nav.classList.contains('open')) close(); else open();
-    });
-
-    // Close when clicking a link (mobile)
-    nav.addEventListener('click', (e)=>{
-      if(e.target.tagName === 'A') close();
-    });
-
-    // Close when clicking outside
-    document.addEventListener('click', (e)=>{
-      if(!nav.contains(e.target) && e.target !== btn) close();
-    });
-
-    // Close on Escape
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape') close();
-    });
-  })();
-</script>
 </body></html>
