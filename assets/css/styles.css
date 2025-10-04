@@ -35,20 +35,25 @@ a:hover{text-decoration:underline}
 .form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
 
 /* =========================
-   Hamburger / Dropdown Nav
+   Hamburger / Dropdown Nav (Applies to ALL screen sizes)
    ========================= */
 .nav{
-    /* Hides the full link list on all screen sizes */
+    /* 🛠️ FIX 1: Set dropdown positioning for all screens (hidden by default) */
+    position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
+    background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
+    flex-direction:column;z-index:30;
+    /* Crucial: This hides the menu on ALL screens unless .open is added */
     display: none; 
-    gap:.5rem;
-    align-items:center
 }
 .nav a{display:inline-block;padding:.5rem .75rem;border-radius:.5rem;color:#1f2937}
 .nav a:hover{background:#f3f4f6;text-decoration:none}
 
+/* 🛠️ FIX 2: Move .nav.open rule OUTSIDE the media query. This makes the dropdown work on desktop. */
+.nav.open{display:flex;} 
+
 /* Hamburger button (visible on all screens) */
 .nav-toggle{
-    /* Shows the hamburger button on all screen sizes */
     display:block; 
     border:1px solid #e5e7eb;
     background:#fff;
@@ -59,17 +64,17 @@ a:hover{text-decoration:underline}
     cursor:pointer
 }
 
-/* Mobile dropdown */
+/* Mobile/small screen adjustments */
 @media (max-width:900px){
-  .nav{
-    position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
-    background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
-    box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
-    display:none;flex-direction:column;z-index:30
-  }
-  /* Allows the JavaScript to show the menu */
-  .nav.open{display:flex;} 
   .nav a{padding:.75rem;border-radius:.5rem}
+}
+/* Desktop/large screen adjustments (makes dropdown narrower and right-aligned) */
+@media (min-width:901px){ 
+    .nav {
+        right: 0;
+        left: unset;
+        width: 250px;
+    }
 }
 
 /* Focus styles (keyboard a11y) */
@@ -119,7 +124,10 @@ body[data-org="supreme-2027"]::before{
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
-/* 🛠️ DELETED: The conflicting z-index:1 block was removed here. */
+/* Keep real content above wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer{
+  position:relative;
+}
 
 /* Printing: hide wallpaper for clarity */
 @media print{
