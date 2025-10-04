@@ -38,38 +38,37 @@ a:hover{text-decoration:underline}
    Hamburger / Dropdown Nav
    ========================= */
 .nav{
-    /* 🛠️ MODIFIED: Change to 'display: none' (not !important) to hide the full list */
-    display: none; 
-    gap:.5rem;
-    align-items:center
+    /* Hides the full link list on all screen sizes */
+    display: none; 
+    gap:.5rem;
+    align-items:center
 }
 .nav a{display:inline-block;padding:.5rem .75rem;border-radius:.5rem;color:#1f2937}
 .nav a:hover{background:#f3f4f6;text-decoration:none}
 
 /* Hamburger button (visible on all screens) */
 .nav-toggle{
-    /* 🛠️ MODIFIED: Change to 'display: block' (not !important) to show the button */
-    display:block; 
-    border:1px solid #e5e7eb;
-    background:#fff;
-    border-radius:.5rem;
-    padding:.4rem .6rem;
-    font-size:1.25rem;
-    line-height:1;
-    cursor:pointer
+    /* Shows the hamburger button on all screen sizes */
+    display:block; 
+    border:1px solid #e5e7eb;
+    background:#fff;
+    border-radius:.5rem;
+    padding:.4rem .6rem;
+    font-size:1.25rem;
+    line-height:1;
+    cursor:pointer
 }
 
 /* Mobile dropdown */
 @media (max-width:900px){
-  /* .nav-toggle{display:block} is removed as it's set above */
   .nav{
     position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
     background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
     box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
     display:none;flex-direction:column;z-index:30
   }
-  /* 🛠️ MODIFIED: Removed !important here. The CSS should handle this without it */
-  .nav.open{display:flex;} 
+  /* Allows the JavaScript to show the menu */
+  .nav.open{display:flex;} 
   .nav a{padding:.75rem;border-radius:.5rem}
 }
 
@@ -120,10 +119,7 @@ body[data-org="supreme-2027"]::before{
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
-/* Keep real content above wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer{
-  position:relative;z-index:1
-}
+/* 🛠️ DELETED: The conflicting z-index:1 block was removed here. */
 
 /* Printing: hide wallpaper for clarity */
 @media print{
