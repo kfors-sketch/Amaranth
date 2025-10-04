@@ -56,6 +56,50 @@ function openLightbox(src, caption){
 }
 /* ---- end lightbox ---- */
 
+/* ---- Dropdown / Hamburger nav ---- */
+function setupNavToggle(){
+  const nav = document.getElementById('nav');
+  const btn = document.getElementById('navToggle');
+  if(!nav || !btn) return;
+
+  const open = ()=>{
+    nav.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    document.body.classList.add('nav-open');
+  };
+  const close = ()=>{
+    nav.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    document.body.classList.remove('nav-open');
+  };
+
+  btn.addEventListener('click', ()=>{
+    const isOpen = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+    document.body.classList.toggle('nav-open', isOpen);
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', (e)=>{
+    if(!nav.classList.contains('open')) return;
+    if(!nav.contains(e.target) && !btn.contains(e.target)) close();
+  });
+
+  // Close on ESC
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') close();
+  });
+
+  // Collapse after choosing a link (useful on mobile)
+  nav.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>{
+      // Only auto-close on smaller screens
+      if(window.matchMedia('(max-width: 900px)').matches) close();
+    });
+  });
+}
+/* ---- end dropdown ---- */
+
 async function renderGroupHome(){
   const org=currentOrg();
   const homeBanquets=document.getElementById('home-banquets');
@@ -526,6 +570,9 @@ async function checkout(){
 document.addEventListener('DOMContentLoaded',()=>{
   const org = currentOrg();
   if (org) document.body.setAttribute('data-org', org);
+
+  // NEW: enable dropdown/hamburger menu
+  setupNavToggle();
 
   renderGroupHome();
   renderBanquets();

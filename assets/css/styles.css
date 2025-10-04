@@ -14,8 +14,8 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 .form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
 /* Per-attendee registration callout */
 .reg-box{
-  border:2px solid #2563eb;           /* blue border */
-  background:#eff6ff;                  /* soft blue bg */
+  border:2px solid #2563eb;
+  background:#eff6ff;
   padding:12px;
   border-radius:12px;
   display:flex;
@@ -28,15 +28,15 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
   border-radius:9999px;
   font-weight:700;
   font-size:.85rem;
-  background:#1d4ed8;                  /* blue chip */
+  background:#1d4ed8;
   color:#fff;
   margin-left:.5rem;
 }
 .reg-box .hint{ font-size:.85rem; color:#475569; }
 .reg-box .title{ font-weight:800; }
 .reg-box.active{
-  border-color:#16a34a;                /* green when checked */
-  background:#ecfdf5;                  /* soft green bg */
+  border-color:#16a34a;
+  background:#ecfdf5;
 }
 /* ==== Ghost / faint wallpaper (site-wide) ==== */
 :root{
@@ -123,3 +123,69 @@ body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
+/* =========================
+   NEW: Navigation (hamburger / dropdown)
+   ========================= */
+
+/* Base nav (desktop) */
+.nav{
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+}
+.nav a{
+  display:inline-block;
+  padding:.5rem .75rem;
+  border-radius:.5rem;
+  color:#1f2937;
+}
+.nav a:hover{
+  background:#f3f4f6; /* light hover */
+  text-decoration:none;
+}
+
+/* Hamburger button (hidden on desktop) */
+.nav-toggle{
+  display:none;
+  border:1px solid #e5e7eb;
+  background:#ffffff;
+  border-radius:.5rem;
+  padding:.4rem .6rem;
+  font-size:1.25rem;
+  line-height:1;
+  cursor:pointer;
+}
+
+/* Mobile layout */
+@media (max-width: 900px){
+  .nav-toggle{ display:block; }
+
+  /* turn the nav into a dropdown panel */
+  .nav{
+    position:absolute;
+    top:100%;
+    right:4%;
+    left:4%;
+    margin-top:.5rem;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:.75rem;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+    padding:.5rem;
+    display:none;             /* hidden by default */
+    flex-direction:column;
+  }
+  .nav.open{                  /* toggled via JS */
+    display:flex;
+  }
+  .nav a{
+    padding:.75rem;
+    border-radius:.5rem;
+  }
+}
+
+/* Focus-visible to improve keyboard nav */
+.nav a:focus-visible, .nav-toggle:focus-visible{
+  outline:3px solid #93c5fd; /* sky-300 */
+  outline-offset:2px;
+}
