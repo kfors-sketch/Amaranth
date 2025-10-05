@@ -1,4 +1,4 @@
-<script>
+
 /* ===== utilities ===== */
 async function getJSON(p){const r=await fetch(p,{cache:'no-store'});if(!r.ok) throw new Error('load '+p);return r.json();}
 function money(c){return `$${(c/100).toFixed(2)}`;}
@@ -552,4 +552,3 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderShop();
   renderOrder();
 });
-</script>
