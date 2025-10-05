@@ -1,4 +1,2 @@
-document.addEventListener('DOMContentLoaded',()=>{
-  const navToggle=document.getElementById('navToggle');const nav=document.getElementById('nav');
-  if(navToggle){navToggle.addEventListener('click',()=>{const ex=navToggle.getAttribute('aria-expanded')==='true';navToggle.setAttribute('aria-expanded',(!ex).toString());nav.classList.toggle('show');});}
-});
+// This file is now empty because the mobile navigation toggle 
+// is no longer needed after removing the hamburger button from the HTML.
