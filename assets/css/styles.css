@@ -1,131 +1,144 @@
-/* =========================
-   Base / Layout
-   ========================= */
+/* base styles */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
-a{color:#1d4ed8;text-decoration:none}
-a:hover{text-decoration:underline}
-.container{width:min(1100px,92%);margin:0 auto}
-.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
-.price{font-weight:700}
-.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
-
-/* Buttons */
+a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
+.container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-
-/* Cards & grid */
 .card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
 @media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
 
-/* Header */
-.site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:20}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;position:relative}
-.logo{display:flex;align-items:center;gap:.5rem;font-weight:700}
-.logo img{width:32px;height:32px}
+.site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
 
-/* Hero */
-.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}
-.hero-inner{padding:4rem 0}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
 
-/* Forms */
-.form label{display:block;margin-bottom:.75rem}
-.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
-
-/* =========================
-   Hamburger / Dropdown Nav
-   ========================= */
-.nav{
-    /* Default state: hidden and positioned as a mobile dropdown on all screens */
-    position:absolute;top:100%;right:4%;left:4%;margin-top:.5rem;
-    background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;
-    box-shadow:0 8px 24px rgba(0,0,0,.08);padding:.5rem;
-    flex-direction:column;z-index:30;
-    /* 🛠️ FIX 1: Ensures menu is hidden by default on ALL screens */
-    display: none; 
-}
-.nav a{display:block;padding:.75rem;border-radius:.5rem;color:#1f2937}
-.nav a:hover{background:#f3f4f6;text-decoration:none}
-
-/* 🛠️ FIX 2: This rule is globally available and makes the menu appear when clicked */
-.nav.open{display:flex;} 
-
-/* Hamburger button: always visible */
-.nav-toggle{
-    display:block; 
-    border:1px solid #e5e7eb;
-    background:#fff;
-    border-radius:.5rem;
-    padding:.4rem .6rem;
-    font-size:1.25rem;
-    line-height:1;
-    cursor:pointer
+/* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY ===== */
+/* 1. Ensure the navigation links are always visible and horizontal */
+.nav {
+    display: flex; 
+    align-items: center;
+    gap: 1rem;
 }
 
-/* Desktop adjustment: makes the dropdown smaller and right-aligned */
-@media (min-width:901px){ 
-    .nav {
-        right: 0;
-        left: unset;
-        width: 250px;
-    }
+/* 2. Permanently hide the hamburger toggle button */
+.nav-toggle {
+    display: none !important; 
 }
+/* ========================================================= */
 
-/* Focus styles (keyboard a11y) */
-.nav a:focus-visible,.nav-toggle:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
-
-/* =========================
-   Per-attendee registration callout
-   ========================= */
+.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}.hero-inner{padding:4rem 0}
+.price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
+.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
+/* Per-attendee registration callout */
 .reg-box{
-  border:2px solid #2563eb;background:#eff6ff;padding:12px;border-radius:12px;
-  display:flex;align-items:center;gap:12px
+  border:2px solid #2563eb;           /* blue border */
+  background:#eff6ff;                  /* soft blue bg */
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 .reg-box .price-chip{
-  display:inline-block;padding:2px 10px;border-radius:9999px;font-weight:700;font-size:.85rem;
-  background:#1d4ed8;color:#fff;margin-left:.5rem
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:9999px;
+  font-weight:700;
+  font-size:.85rem;
+  background:#1d4ed8;                  /* blue chip */
+  color:#fff;
+  margin-left:.5rem;
 }
-.reg-box .hint{font-size:.85rem;color:#475569}
-.reg-box .title{font-weight:800}
-.reg-box.active{border-color:#16a34a;background:#ecfdf5}
-
-/* =========================
-   Faint Wallpaper (site-wide)
-   ========================= */
+.reg-box .hint{ font-size:.85rem; color:#475569; }
+.reg-box .title{ font-weight:800; }
+.reg-box.active{
+  border-color:#16a34a;                /* green when checked */
+  background:#ecfdf5;                  /* soft green bg */
+}
+/* ==== Ghost / faint wallpaper (site-wide) ==== */
 :root{
-  --wallpaper-url: url('/assets/img/wallpaper.jpg');  /* default image */
-  --wallpaper-opacity: 0.12;                          /* nice and subtle */
-  --wallpaper-size: cover;
+  --wallpaper-url: url('/assets/img/wallpaper.jpg');
+  --wallpaper-opacity: 0.06;
+  --wallpaper-size: 900px;
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
 }
 
-body{position:relative}
 body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:var(--wallpaper-url);
-  background-position:var(--wallpaper-position);
-  background-repeat:var(--wallpaper-repeat);
-  background-size:var(--wallpaper-size);
-  opacity:var(--wallpaper-opacity);
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image: var(--wallpaper-url);
+  background-position: var(--wallpaper-position);
+  background-repeat: var(--wallpaper-repeat);
+  background-size: var(--wallpaper-size);
+  opacity: var(--wallpaper-opacity);
 }
 
-/* Per-org wallpaper overrides */
-body[data-org="pa-2026"]::before{
+body[data-org="pa-2026"]::before {
   --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
 }
-body[data-org="supreme-2027"]::before{
+
+body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
-/* Keep real content above wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer{
-  position:relative;
+
+/* Make sure real content stays above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle {
+  position: relative;
+  z-index: 1;
 }
 
-/* Printing: hide wallpaper for clarity */
-@media print{
-  body::before{display:none}
+/* Optional: Don’t show wallpaper when printing */
+@media print {
+  body::before { display:none; }
+}
+/* ===== Wallpaper: debug-strong & stacking fix (NOTE: This section is a duplicate, kept for completeness) ===== */
+/* It is highly recommended to merge the two wallpaper sections in your final file. */
+:root{
+  --wallpaper-url: url('/assets/img/wallpaper.jpg'); /* default */
+  --wallpaper-opacity: 0.18;  /* temporarily stronger so it's obvious */
+  --wallpaper-size: cover;    /* fill screen */
+  --wallpaper-repeat: no-repeat;
+  --wallpaper-position: center center;
+}
+
+/* Create a stacking context so ::before sits under content but above body bg */
+body { position: relative; }
+
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;                  /* wallpaper layer */
+  pointer-events: none;
+
+  /* image + a faint tint so you can tell it's working even if image path is wrong */
+  background-image: var(--wallpaper-url);
+  background-position: var(--wallpaper-position);
+  background-repeat: var(--wallpaper-repeat);
+  background-size: var(--wallpaper-size);
+  opacity: var(--wallpaper-opacity);
+
+  /* fallback tint: comment this out later */
+  background-color: rgba(0,0,0,0.06);
+}
+
+/* Ensure all main content is above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-org overrides (optional: only if you want different images) */
+body[data-org="pa-2026"]::before {
+  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+}
+body[data-org="supreme-2027"]::before {
+  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
