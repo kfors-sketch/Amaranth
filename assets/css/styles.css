@@ -14,17 +14,14 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 
 .logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
 
-/* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY ===== */
-/* 1. Ensure the navigation links are always visible and horizontal */
+/* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY (Kept) ===== */
 .nav {
-    display: flex; 
-    align-items: center;
-    gap: 1rem;
+    display: flex; 
+    align-items: center;
+    gap: 1rem;
 }
-
-/* 2. Permanently hide the hamburger toggle button */
 .nav-toggle {
-    display: none !important; 
+    display: none !important; 
 }
 /* ========================================================= */
 
@@ -57,53 +54,13 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
   border-color:#16a34a;                /* green when checked */
   background:#ecfdf5;                  /* soft green bg */
 }
-/* ==== Ghost / faint wallpaper (site-wide) ==== */
+
+/* ==== Ghost / faint wallpaper (site-wide) - CONSOLIDATED FIX ==== */
 :root{
-  --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.06;
-  --wallpaper-size: 900px;
-  --wallpaper-repeat: no-repeat;
-  --wallpaper-position: center center;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  background-image: var(--wallpaper-url);
-  background-position: var(--wallpaper-position);
-  background-repeat: var(--wallpaper-repeat);
-  background-size: var(--wallpaper-size);
-  opacity: var(--wallpaper-opacity);
-}
-
-body[data-org="pa-2026"]::before {
-  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
-}
-
-body[data-org="supreme-2027"]::before {
-  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
-}
-
-
-/* Make sure real content stays above the wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle {
-  position: relative;
-  z-index: 1;
-}
-
-/* Optional: Don’t show wallpaper when printing */
-@media print {
-  body::before { display:none; }
-}
-/* ===== Wallpaper: debug-strong & stacking fix (NOTE: This section is a duplicate, kept for completeness) ===== */
-/* It is highly recommended to merge the two wallpaper sections in your final file. */
-:root{
-  --wallpaper-url: url('/assets/img/wallpaper.jpg'); /* default */
-  --wallpaper-opacity: 0.18;  /* temporarily stronger so it's obvious */
-  --wallpaper-size: cover;    /* fill screen */
+  /* Consolidated and fixed defaults */
+  --wallpaper-url: url('/assets/img/wallpaper.jpg'); 
+  --wallpaper-opacity: 0.1; /* Increased opacity for visibility */
+  --wallpaper-size: cover; /* Use cover to fill the screen */
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
 }
@@ -115,30 +72,37 @@ body::before{
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;                  /* wallpaper layer */
+  z-index: -1; /* CRITICAL FIX: Put the wallpaper BEHIND the content */
   pointer-events: none;
 
-  /* image + a faint tint so you can tell it's working even if image path is wrong */
+  /* Apply the visual properties */
   background-image: var(--wallpaper-url);
   background-position: var(--wallpaper-position);
   background-repeat: var(--wallpaper-repeat);
   background-size: var(--wallpaper-size);
   opacity: var(--wallpaper-opacity);
 
-  /* fallback tint: comment this out later */
-  background-color: rgba(0,0,0,0.06);
+  /* fallback tint */
+  background-color: rgba(0,0,0,0.06); 
 }
 
-/* Ensure all main content is above the wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
-  position: relative;
-  z-index: 1;
-}
-
-/* Per-org overrides (optional: only if you want different images) */
+/* Per-org overrides */
 body[data-org="pa-2026"]::before {
-  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+  /* ⚠️ TEMPORARY TEST: Using the default wallpaper to check file path integrity */
+  --wallpaper-url: url('/assets/img/wallpaper.jpg');
 }
 body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
+}
+
+/* Ensure all main content is above the wallpaper */
+/* Z-index 1 is sufficient as the wallpaper is now Z-index -1 */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
+  position: relative;
+  z-index: 1; 
+}
+
+/* Optional: Don’t show wallpaper when printing */
+@media print {
+  body::before { display:none; }
 }
