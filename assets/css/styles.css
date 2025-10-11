@@ -2,20 +2,20 @@
 *{box-sizing:border-box}
 /* FINAL FIX: Apply image directly to the body */
 html,body{
-    margin:0;
-    padding:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:#1f2937;
-    background:#fff;
-    
-    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
-    background-image: url('/assets/img/wallpaper.jpg');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%; 
-    background-attachment: fixed; 
-    opacity: 1; 
-    background-color: #f3f4f6;
+    margin:0;
+    padding:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:#1f2937;
+    background:#fff;
+    
+    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
+    background-image: url('/assets/img/wallpaper.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%; 
+    background-attachment: fixed; 
+    opacity: 1; 
+    background-color: #f3f4f6;
 }
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
@@ -30,14 +30,14 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 
 /* 🛑 LAST RESORT FIX: Ensure items inside the grid don't force full width */
 .grid-3 > *, .grid-2 > * {
-    width: auto !important;
+    width: auto !important;
 }
 
 .site-header{
     position:sticky;
     top:0;
     background:#fff;
-    border-bottom:0px solid transparent !important; 
+    border-bottom:0px solid transparent !important; 
     z-index:10
 }
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
@@ -47,13 +47,13 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .nav {
     display: flex; 
     align-items: center;
-    gap: 3rem; 
+    gap: 3rem; 
 }
 .nav a {
-    margin-right: 1.5rem; 
+    margin-right: 1.5rem; 
 }
 .nav a:last-child {
-    margin-right: 0;
+    margin-right: 0;
 }
 .nav-toggle {
     display: none !important; 
