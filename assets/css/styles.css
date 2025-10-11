@@ -1,88 +1,203 @@
 /* base styles */
+
 *{box-sizing:border-box}
 
-/* CRITICAL FIX: Wallpaper and Ghostly Overlay */
+/* FINAL FIX: Apply image directly to the body */
+
 html,body{
+
     margin:0;
+
     padding:0;
+
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+
     color:#1f2937;
-    /* Ensure body and html backgrounds are transparent so the wallpaper shows */
-    background:transparent; 
-    background-color: #f3f4f6; /* Fallback */
-}
 
-/* 1. Set the Wallpaper on the HTML element to be at the true background */
-html {
+    background:#fff;
+
+    
+
+    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
+
     background-image: url('/assets/img/wallpaper.jpg');
+
     background-position: center center;
+
     background-repeat: no-repeat;
-    background-size: cover; /* This makes the image fill the screen */
+
+    background-size: 100% 100%; 
+
     background-attachment: fixed; 
+
+    opacity: 1; 
+
+    background-color: #f3f4f6;
+
 }
 
-/* 2. Create the Semi-Transparent Overlay (the "Ghostly" effect) */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* 50% opaque white overlay, placed under the content */
-    background-color: rgba(255, 255, 255, 0.5); 
-    z-index: -1; 
-}
+
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
+
 .container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
+
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
+
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 
-/* Cards remain highly readable (95% opaque white) */
-.card{
-    border:1px solid #e5e7eb;
-    border-radius:.75rem;
-    padding:1rem;
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow:0 1px 2px rgba(0,0,0,.03);
+.card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+
+
+
+/* 🛑 GRID FIX: Forces columns using !important */
+
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr) !important;gap:1rem}
+
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr) !important;gap:1rem}
+
+
+
+/* 🛑 LAST RESORT FIX: Ensure items inside the grid don't force full width */
+
+.grid-3 > *, .grid-2 > * {
+
+    width: auto !important;
+
 }
 
-/* 3. COLUMN RESTORATION - Re-enabling grid display */
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
-.grid-3 > *, .grid-2 > *, .grid-4 > * {
-    width: auto; /* Ensures grid items share space correctly */
-}
-/* END COLUMN RESTORATION */
 
 
-/* NAVIGATION & MAIN CONTENT: Set to transparent so the new ghostly background is visible */
 .site-header{
+
     position:sticky;
+
     top:0;
-    background-color: rgba(255, 255, 255, 0.9); /* Opaque enough for navigation bar */
+
+    background:#fff;
+
     border-bottom:0px solid transparent !important; 
+
     z-index:10
+
 }
+
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
+
 .logo{display:none !important;}
 
-.hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
-main {background: transparent; padding: 20px 0;} /* Transparent main content area */
 
-/* ===== REST OF CSS (Kept) ===== */
-.nav { display: flex; gap: 3rem; }
-.nav a { margin-right: 1.5rem; }
-.nav a:last-child { margin-right: 0; }
-.nav-toggle { display: none !important; }
+
+/* ===== NAVIGATION STYLING (Kept) ===== */
+
+.nav {
+
+    display: flex; 
+
+    align-items: center;
+
+    gap: 3rem; 
+
+}
+
+.nav a {
+
+    margin-right: 1.5rem; 
+
+}
+
+.nav a:last-child {
+
+    margin-right: 0;
+
+}
+
+.nav-toggle {
+
+    display: none !important; 
+
+}
+
+/* ========================================================= */
+
+
+
+.hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
+
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
+
 .form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
-.reg-box{ border:2px solid #2563eb; background:#eff6ff; padding:12px; border-radius:12px; display:flex; align-items:center; gap:12px; }
-.reg-box .price-chip{ display:inline-block; padding:2px 10px; border-radius:9999px; font-weight:700; font-size:.85rem; background:#1d4ed8; color:#fff; margin-left:.5rem; }
+
+/* Per-attendee registration callout */
+
+.reg-box{
+
+  border:2px solid #2563eb;           /* blue border */
+
+  background:#eff6ff;                  /* soft blue bg */
+
+  padding:12px;
+
+  border-radius:12px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+}
+
+.reg-box .price-chip{
+
+  display:inline-block;
+
+  padding:2px 10px;
+
+  border-radius:9999px;
+
+  font-weight:700;
+
+  font-size:.85rem;
+
+  background:#1d4ed8;                  /* blue chip */
+
+  color:#fff;
+
+  margin-left:.5rem;
+
+}
+
 .reg-box .hint{ font-size:.85rem; color:#475569; }
+
 .reg-box .title{ font-weight:800; }
-.reg-box.active{ border-color:#16a34a; background:#ecfdf5; }
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer { position: relative; z-index: 1; }
-@media print { body::before { display:none; } }
+
+.reg-box.active{
+
+  border-color:#16a34a;                /* green when checked */
+
+  background:#ecfdf5;                  /* soft green bg */
+
+}
+
+
+
+/* Ensure all main content is above the wallpaper */
+
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
+
+  position: relative;
+
+  z-index: 1; 
+
+}
+
+
+
+/* Optional: Don’t show wallpaper when printing */
+
+@media print {
+
+  body::before { display:none; }
+
+}
