@@ -42,52 +42,55 @@ function openLightbox(src,caption){
 
 /* ===== home widgets ===== */
 async function renderGroupHome(){
-  const org=currentOrg();
-  const homeBanquets=document.getElementById('home-banquets');
-  const homeProducts=document.getElementById('home-products');
+  const org=currentOrg();
+  const homeBanquets=document.getElementById('home-banquets');
+  const homeProducts=document.getElementById('home-products');
 
-  // --- START FIX: Add try/catch for robust data loading ---
-  try {
-    if(homeBanquets){
-      const banquets=await getJSON(`/data/${org}/banquets.json`);
-      homeBanquets.innerHTML=(banquets.events||[]).slice(0,8).map(ev=>`
-        <div class="card">
-          <h3>${ev.title}</h3>
-          <p>${formatBanquetDateTime(ev.datetime_iso)}</p>
-          <p>${ev.venue||''}</p>
-        </div>`).join('');
-    }
+  if(homeBanquets){
+    try {
+      const banquets=await getJSON(`/data/${org}/banquets.json`);
+      homeBanquets.innerHTML=(banquets.events||[]).slice(0,8).map(ev=>`
+        <div class="card">
+          <h3>${ev.title}</h3>
+          <p>${formatBanquetDateTime(ev.datetime_iso)}</p>
+          <p>${ev.venue||''}</p>
+        </div>`).join('');
+    } catch (e) {
+      console.error("Could not load home banquets data (likely 404).", e);
+    }
+  }
 
-    if(homeProducts){
-      const products=await getJSON(`/data/${org}/products.json`);
-      homeProducts.innerHTML=(products.items||[]).slice(0,3).map(p=>`
-        <div class="card">
-          <h3>${p.name}</h3>
-          <p>${p.description||''}</p>
-          <div class="price">${money(p.price_cents)}</div>
-        </div>`).join('');
-    }
-  } catch(e) {
-    // This will now log any fetch or JSON parsing errors to your browser console
-    console.error('Error loading home widget data:', e.message);
-    if(homeBanquets) homeBanquets.innerHTML = `<div class="tiny">Error loading banquets: ${e.message}</div>`;
-    if(homeProducts) homeProducts.innerHTML = `<div class="tiny">Error loading products: ${e.message}</div>`;
-  }
-  // --- END FIX ---
+  if(homeProducts){
+    try {
+      const products=await getJSON(`/data/${org}/products.json`);
+      homeProducts.innerHTML=(products.items||[]).slice(0,3).map(p=>`
+        <div class="card">
+          <h3>${p.name}</h3>
+          <p>${p.description||''}</p>
+          <div class="price">${money(p.price_cents)}</div>
+        </div>`).join('');
+    } catch (e) {
+      console.error("Could not load home products data (likely 404).", e);
+    }
+  }
 }
 
 async function renderBanquets(){
   const org=currentOrg();
-  const data=await getJSON(`/data/${org}/banquets.json`);
-  const el=document.getElementById('banquet-list');
-  if(el){
-    el.innerHTML=(data.events||[]).map(ev=>`
-      <div class="card">
-        <h3>${ev.title}</h3>
-        <p><strong>${formatBanquetDateTime(ev.datetime_iso)}</strong> — ${ev.venue||''}</p>
-        ${(ev.tickets||[]).map(t=>`<div class="mt">${t.label} — ${money(t.price_cents)}</div>`).join('')}
-        <p class="tiny">Meals: ${(ev.meals||[]).map(m=>m.label).join(', ')}</p>
+  try {
+    const data=await getJSON(`/data/${org}/banquets.json`);
+    const el=document.getElementById('banquet-list');
+    if(el){
+      el.innerHTML=(data.events||[]).map(ev=>`
+        <div class="card">
+          <h3>${ev.title}</h3>
+          <p><strong>${formatBanquetDateTime(ev.datetime_iso)}</strong> — ${ev.venue||''}</p>
+          ${(ev.tickets||[]).map(t=>`<div class="mt">${t.label} — ${money(t.price_cents)}</div>`).join('')}
+          <p class="tiny">Meals: ${(ev.meals||[]).map(m=>m.label).join(', ')}</p>
       </div>`).join('');
+    }
+  } catch (e) {
+    console.error("Could not load main banquets data (likely 404).", e);
   }
 }
 
@@ -95,34 +98,245 @@ async function renderDirectory(){
   const org=currentOrg();
   const el=document.getElementById('directory-info');
   if(!el) return;
-  const s=await getJSON(`/data/${org}/settings.json`);
-  el.textContent=s.directory?.blurb||'Purchase a printed directory via the Order page.';
+  try {
+    const s=await getJSON(`/data/${org}/settings.json`);
+    el.textContent=s.directory?.blurb||'Purchase a printed directory via the Order page.';
+  } catch (e) {
+    console.error("Could not load directory settings data (likely 404).", e);
+  }
 }
 
 async function renderShop(){
   const org=currentOrg();
-  const data=await getJSON(`/data/${org}/products.json`);
-  const grid=document.getElementById('product-grid');
-  if(!grid) return;
+  try {
+    const data=await getJSON(`/data/${org}/products.json`);
+    const grid=document.getElementById('product-grid');
+    if(!grid) return;
 
-  const pickImage=p=>p.image||p.image_url||p.img||(Array.isArray(p.images)&&p.images[0])||'';
+    const pickImage=p=>p.image||p.image_url||p.img||(Array.isArray(p.images)&&p.images[0])||'';
 
-  const cards=(data.items||[]).map(p=>{
-    const imgSrc=pickImage(p);
-    const imgBlock=imgSrc?`
-      <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
-        <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
-      </button>`:'';
-    return `
-      <div class="card">
-        ${imgBlock}
-        <h3 style="margin-top:.5rem;">${p.name}</h3>
-        <p>${p.description||''}</p>
-        <div class="price">${money(p.price_cents)}</div>
+    const cards=(data.items||[]).map(p=>{
+      const imgSrc=pickImage(p);
+      const imgBlock=imgSrc?`
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>`:'';
+      return `
+        <div class="card">
+          ${imgBlock}
+          <h3 style="margin-top:.5rem;">${p.name}</h3>
+          <p>${p.description||''}</p>
+          <div class="price">${money(p.price_cents)}</div>
+        </div>`;
+    }).join('');
+
+    grid.innerHTML=cards;
+
+    grid.addEventListener('click',e=>{
+      const btn=e.target.closest('.img-zoom'); if(!btn) return;
+      const full=btn.getAttribute('data-full'); const label=btn.getAttribute('aria-label')||'';
+      if(full) openLightbox(full,label.replace(/^View\s+/,''));
+    });
+  } catch (e) {
+    console.error("Could not load shop products data (likely 404).", e);
+  }
+}
+
+/* ===== ORDER ===== */
+let STATE=null;
+
+function surchargeOf(base){
+  const s=STATE?.settings?.surcharge||{};
+  const P=Number(s.fee_percent||0), F=Number(s.fee_fixed_cents||0), CAP=Number(s.cap_percent||0);
+  if(!s.enabled||(P<=0&&F<=0)) return 0;
+  const gross=Math.ceil((base+F)/(1-P));
+  let sur=gross-base;
+  if(CAP>0){const capPct=Math.floor(base*CAP); if(sur>capPct) sur=capPct;}
+  return sur;
+}
+
+function regPriceCents(){
+  const p=(STATE?.products?.items||[]).find(x=>x.handle==='registration');
+  return p?Number(p.price_cents||0):0;
+}
+
+async function renderOrder(){
+  /* FIX: guard so running this on non-order pages doesn’t crash */
+  const hasOrderUI = document.getElementById('attendee-list') ||
+                     document.getElementById('store-list') ||
+                     document.getElementById('checkout');
+  if(!hasOrderUI) return;
+
+  const org=currentOrg(); if(!org) return;
+
+  try {
+    const [products,banquets,settings]=await Promise.all([
+      getJSON(`/data/${org}/products.json`),
+      getJSON(`/data/${org}/banquets.json`),
+      getJSON(`/data/${org}/settings.json`)
+    ]);
+    STATE={org, attendees:[], store:{}, storeNotes:{}, products, banquets, settings};
+  } catch (e) {
+    console.error("Could not load order page data (likely 404).", e);
+    return; // Prevent crashing the rest of the logic if data fails to load
+  }
+
+  const addBtn=document.getElementById('add-attendee');
+  if(addBtn) addBtn.addEventListener('click', addAttendee);
+
+  /* FIX: only seed an attendee if the container exists */
+  if(document.getElementById('attendee-list')) addAttendee();
+
+  const store=document.getElementById('store-list');
+  if(store){
+    const addonsHandles=new Set(['directory','corsage']);
+    const items=(STATE.products.items||[]);
+    const addons=items.filter(p=>addonsHandles.has(p.handle)&&p.handle!=='registration');
+    const merch =items.filter(p=>!addonsHandles.has(p.handle)&&p.handle!=='registration');
+
+    const pickImage=p=>p.image||p.image_url||p.img||(Array.isArray(p.images)&&p.images[0])||'';
+    const renderItem=p=>{
+      const q=STATE.store[p.handle]||0;
+      const imgSrc=pickImage(p);
+      const thumb=imgSrc?`
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>`:'';
+      return `
+        <div class="card">
+          ${thumb}
+          <h3>${p.name}</h3>
+          <p>${p.description||''}</p>
+          <div class="price">${money(p.price_cents)}</div>
+          <label>Qty <input type="number" min="0" value="${q}" data-handle="${p.handle}" class="store-qty"></label>
+        </div>`;
+    };
+
+    const renderCorsage=p=>{
+      const qty=STATE.store['corsage']||0;
+      const note=STATE.storeNotes['corsage']||'';
+      const presets=['Red Roses','Pink Roses','Yellow Roses','Spring Flowers'];
+      const selected=presets.includes(note)?note:(note?'Custom':'Red Roses');
+      const customText=(selected==='Custom' && !presets.includes(note))?note:'';
+      const imgSrc=pickImage(p);
+      const thumb=imgSrc?`
+        <button type="button" class="img-zoom" data-full="${imgSrc}" aria-label="View ${p.name}">
+          <img src="${imgSrc}" alt="${p.name}" loading="lazy" style="max-width:100%;height:auto;border-radius:.75rem;">
+        </button>`:'';
+      return `
+        <div class="card">
+          ${thumb}
+          <h3>${p.name} ($${(p.price_cents/100).toFixed(0)})</h3>
+          <p>${p.description||''}</p>
+          <div class="grid-3">
+            <label>Style
+              <select id="corsage-style">
+                <option value="Red Roses"${selected==='Red Roses'?' selected':''}>Red Roses</option>
+                <option value="Pink Roses"${selected==='Pink Roses'?' selected':''}>Pink Roses</option>
+                <option value="Yellow Roses"${selected==='Yellow Roses'?' selected':''}>Yellow Roses</option>
+                <option value="Spring Flowers"${selected==='Spring Flowers'?' selected':''}>Spring Flowers</option>
+                <option value="Custom"${selected==='Custom'?' selected':''}>Custom</option>
+              </select>
+            </label>
+            <label>Custom text (if Custom)
+              <input type="text" id="corsage-custom" placeholder="Describe your request" value="${customText}">
+            </label>
+            <label>Qty
+              <input type="number" id="corsage-qty" min="0" value="${qty}">
+            </label>
+          </div>
+        </div>`;
+    };
+
+    const addonsHTML=addons.map(p=>p.handle==='corsage'?renderCorsage(p):renderItem(p)).join('');
+    const merchHTML =merch.map(renderItem).join('');
+
+    store.innerHTML=`
+      <div class="store-sections">
+        <section class="card store-addons">
+          <h2>Event add-ons</h2>
+          <div class="grid-2">
+            ${addonsHTML || '<div class="tiny">No add-ons available.</div>'}
+          </div>
+        </section>
+        <section class="card store-merch" style="margin-top:24px">
+          <h2>Merchandise</h2>
+          <div class="grid-3">
+            ${merchHTML || '<div class="tiny">No merchandise available.</div>'}
+          </div>
+        </section>
       </div>`;
-  }).join('');
 
-  grid.innerHTML=cards;
+    document.querySelectorAll('.store-qty').forEach(inp=>{
+      inp.addEventListener('input',e=>{
+        const h=e.target.getAttribute('data-handle');
+        const v=Math.max(0,Number(e.target.value||0));
+        if(v===0) delete STATE.store[h]; else STATE.store[h]=v;
+        updateTotal();
+      });
+    });
 
-  grid.addEventListener('click',e=>{
-    const btn=e.target.closest('.img-zoom'); if(!btn)
+    store.addEventListener('click',e=>{
+      const btn=e.target.closest('.img-zoom'); if(!btn) return;
+      const full=btn.getAttribute('data-full'); const label=btn.getAttribute('aria-label')||'';
+      if(full) openLightbox(full,label.replace(/^View\s+/,''));
+    });
+
+    const cq=document.getElementById('corsage-qty');
+    const cs=document.getElementById('corsage-style');
+    const cc=document.getElementById('corsage-custom');
+    function syncCorsage(){
+      if(!cq||!cs||!cc) return;
+      const qty=Math.max(0,Number(cq.value||0));
+      const style=cs.value;
+      const custom=(cc.value||'').trim();
+      if(qty>0){
+        STATE.store['corsage']=qty;
+        STATE.storeNotes['corsage']=(style==='Custom')?(custom||'Custom'):style;
+      }else{
+        delete STATE.store['corsage'];
+        delete STATE.storeNotes['corsage'];
+      }
+      updateTotal();
+    }
+    cq?.addEventListener('input',syncCorsage);
+    cs?.addEventListener('change',syncCorsage);
+    cc?.addEventListener('input',syncCorsage);
+  }
+
+  const donateWrap=document.getElementById('extra-donation');
+  if(donateWrap && STATE.settings.donations?.allow_extra_on_order){
+    donateWrap.innerHTML=`<p>${STATE.settings.donations.purpose_text||''}</p>
+      <div id="donation-quick"></div>
+      <label>Custom amount (USD) <input type="number" id="donation-amount" min="0" step="1" value="${STATE.settings.donations.default_amount||0}"></label>`;
+    const quick=donateWrap.querySelector('#donation-quick');
+    if(quick){
+      quick.innerHTML=(STATE.settings.donations.suggested||[]).map(v=>`<button class="btn" data-dn="${v}">$${v}</button>`).join(' ');
+      quick.querySelectorAll('[data-dn]').forEach(b=>b.addEventListener('click',e=>{
+        const val=Number(e.currentTarget.getAttribute('data-dn')||0);
+        const inp=document.getElementById('donation-amount'); if(inp) inp.value=val; updateTotal();
+      }));
+    }
+    donateWrap.querySelector('#donation-amount')?.addEventListener('input', updateTotal);
+  }
+
+  document.getElementById('checkout')?.addEventListener('click', checkout);
+  updateTotal();
+}
+
+/**
+ * FIX: Enhanced attendeeCard for safer data access.
+ * This function now pre-loads current selections or defaults to prevent null/undefined errors.
+ */
+function attendeeCard(i){
+  const evs=STATE.banquets.events||[];
+  const attendee = STATE.attendees[i] || {};
+  // Ensure 'selections' is an array, even if empty
+  attendee.selections = attendee.selections || [];
+
+  const blocks=evs.map((ev,idx)=>{
+    // Get the selection for this specific event index, or use an empty object as a safe default
+    const sel = attendee.selections[idx] || {};
+
+    const tickets=(ev.tickets||[]).map(t=>{
+      const value = `${t.handle}|${t.price_
