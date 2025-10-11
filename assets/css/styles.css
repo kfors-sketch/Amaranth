@@ -101,16 +101,9 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
   body::before { display:none; }
 }
 
-/* 💀 FINAL AGGRESSIVE HAMBURGER OVERRIDE 💀 */
-/* This rule targets all known variations of mobile toggles to ensure they are hidden on PC */
-.nav-toggle, 
-.menu-toggle, 
-.navbar-toggler, 
-.mobile-nav-toggle, 
-.site-header button,
-.site-header a[aria-expanded],
-.header-inner button,
-.header-inner a[aria-controls]
-{
+/* 🎯 HAMBURGER KILL SWITCH 🎯 */
+/* Targets the element by ID and class to override all specificity issues. */
+.nav-toggle,
+#navtoggle {
     display: none !important;
 }
