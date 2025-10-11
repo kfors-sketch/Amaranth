@@ -1,23 +1,38 @@
 /* base styles */
 *{box-sizing:border-box}
-/* FINAL FIX: Apply image directly to the body */
+
+/* CRITICAL FIX: Wallpaper and Ghostly Overlay */
 html,body{
     margin:0;
     padding:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     color:#1f2937;
-    background:#fff;
-    
-    /* GHOSTLY EFFECT FIX: Use a linear-gradient to put a 50% opaque white layer 
-       directly OVER the wallpaper image, making the wallpaper visible and muted. */
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-        url('/assets/img/wallpaper.jpg');
+    /* REMOVED: conflicting background-color */
+    background:transparent; 
+    background-color: #f3f4f6; /* Fallback */
+}
+
+/* 1. Set the Wallpaper on the HTML element */
+html {
+    /* BACKGROUND PROPERTIES */
+    background-image: url('/assets/img/wallpaper.jpg');
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover; /* Use 'cover' for better scaling */
     background-attachment: fixed; 
-    background-color: #f3f4f6; /* Fallback color */
+}
+
+/* 2. Create the Semi-Transparent Overlay (the "Ghostly" effect) */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 50% opaque white overlay */
+    background-color: rgba(255, 255, 255, 0.5); 
+    z-index: -1; /* Place it under the actual page content */
 }
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
@@ -34,21 +49,82 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
     box-shadow:0 1px 2px rgba(0,0,0,.03);
 }
 
-/* READABILITY FIX: Set these main containers to transparent so the ghostly 
-   wallpaper shows through, but the text remains readable against the muted background.
-*/
-
+/* NAVIGATION & MAIN CONTENT: Set to transparent so the new ghostly background is visible */
 .site-header{
     position:sticky;
     top:0;
-    background-color: rgba(255, 255, 255, 0.9); /* Opaque enough for navigation */
+    background-color: rgba(255, 255, 255, 0.9); /* Opaque enough for navigation bar */
     border-bottom:0px solid transparent !important; 
     z-index:10
 }
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
 .logo{display:none !important;}
 
-/* Make the Hero/Page Title area transparent */
 .hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
+main {background: transparent; padding: 20px 0;} /* Transparent main content area */
 
-/* Make the
+/* GRID DEFINITIONS (Kept) */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid-3 > *, .grid-2 > *, .grid-4 > * {
+    width: auto;
+}
+
+/* ===== NAVIGATION STYLING (Kept) ===== */
+.nav {
+    display: flex; 
+    align-items: center;
+    gap: 3rem; 
+}
+.nav a {
+    margin-right: 1.5rem; 
+}
+.nav a:last-child {
+    margin-right: 0;
+}
+.nav-toggle {
+    display: none !important; 
+}
+/* ===================================== */
+
+.price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
+.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
+
+/* Per-attendee registration callout (Kept) */
+.reg-box{
+  border:2px solid #2563eb;
+  background:#eff6ff;
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.reg-box .price-chip{
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:9999px;
+  font-weight:700;
+  font-size:.85rem;
+  background:#1d4ed8;
+  color:#fff;
+  margin-left:.5rem;
+}
+.reg-box .hint{ font-size:.85rem; color:#475569; }
+.reg-box .title{ font-weight:800; }
+.reg-box.active{
+  border-color:#16a34a;
+  background:#ecfdf5;
+}
+
+/* Ensure all main content is above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
+  position: relative;
+  z-index: 1; 
+}
+
+/* Optional: Don’t show wallpaper when printing */
+@media print {
+  body::before { display:none; }
+}
