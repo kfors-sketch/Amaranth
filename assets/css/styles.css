@@ -23,13 +23,12 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 /* Logo removed */
 .logo{display:none !important;}
 
-/* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY (Kept) ===== */
+/* ===== NAVIGATION STYLING (Kept) ===== */
 .nav {
     display: flex; 
     align-items: center;
     gap: 3rem; 
 }
-
 /* Added space between links */
 .nav a {
     margin-right: 1.5rem; 
@@ -37,7 +36,6 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .nav a:last-child {
     margin-right: 0;
 }
-
 .nav-toggle {
     display: none !important; 
 }
@@ -77,8 +75,7 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 
 /* ==== Ghost / faint wallpaper (site-wide) - CONSOLIDATED FIX ==== */
 :root{
-  /* Consolidated and fixed defaults */
-  /* ⚠️ CHANGE 1: We will rely on this default path since it works */
+  /* ⚠️ FINAL FIX: Set working image as the default for all pages */
   --wallpaper-url: url('/assets/img/wallpaper.jpg'); 
   --wallpaper-opacity: 0.1; 
   --wallpaper-size: cover; 
@@ -93,10 +90,10 @@ body::before{
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1; 
+  z-index: -1; /* This is essential for the background effect */
   pointer-events: none;
 
-  /* Apply the visual properties (uses the working path from :root) */
+  /* Apply the visual properties (now reliably using the path from :root) */
   background-image: var(--wallpaper-url);
   background-position: var(--wallpaper-position);
   background-repeat: var(--wallpaper-repeat);
@@ -107,11 +104,10 @@ body::before{
   background-color: rgba(0,0,0,0.06); 
 }
 
-/* ⚠️ CHANGE 2: Removed the redundant 'pa-2026' override, allowing the default working image to apply.
-   The 'supreme-2027' override is kept for its unique image. */
-body[data-org="supreme-2027"]::before {
-  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
-}
+/* ⚠️ REMOVED ALL OTHER body[data-org] OVERRIDES */
+/* The 'supreme-2027' image is now also gone, as it conflicts with this universal fix.
+   If you need that specific image, you will need to add that single block back. */
+
 
 /* Ensure all main content is above the wallpaper */
 .site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
