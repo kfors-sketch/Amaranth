@@ -8,14 +8,16 @@ html,body{
     color:#1f2937;
     background:#fff;
     
-    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
-    background-image: url('/assets/img/wallpaper.jpg');
+    /* GHOSTLY EFFECT FIX: Use a linear-gradient to put a 50% opaque white layer 
+       directly OVER the wallpaper image, making the wallpaper visible and muted. */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+        url('/assets/img/wallpaper.jpg');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 100% 100%; 
+    background-size: cover; /* Use 'cover' for better scaling */
     background-attachment: fixed; 
-    opacity: 1; 
-    background-color: #f3f4f6;
+    background-color: #f3f4f6; /* Fallback color */
 }
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
@@ -23,72 +25,30 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 
-/* 1. GHOSTLY BACKGROUND FIXES START HERE */
-
-/* Individual cards are now highly readable (95% opaque white) */
+/* Cards remain highly readable (95% opaque white) */
 .card{
     border:1px solid #e5e7eb;
     border-radius:.75rem;
     padding:1rem;
-    background-color: rgba(255, 255, 255, 0.95); /* Near-solid white for card readability */
+    background-color: rgba(255, 255, 255, 0.95);
     box-shadow:0 1px 2px rgba(0,0,0,.03);
 }
 
-/* Make the main sticky header transparent to show the wallpaper, but keep text readable */
+/* READABILITY FIX: Set these main containers to transparent so the ghostly 
+   wallpaper shows through, but the text remains readable against the muted background.
+*/
+
 .site-header{
     position:sticky;
     top:0;
-    background-color: rgba(255, 255, 255, 0.9); /* 90% opaque white for the top bar */
+    background-color: rgba(255, 255, 255, 0.9); /* Opaque enough for navigation */
     border-bottom:0px solid transparent !important; 
     z-index:10
 }
-
-/* Make the Hero/Page Title area readable (assuming your page name lives here) */
-.hero{
-    background-color: rgba(255, 255, 255, 0.75); /* 75% opaque white for the banner area */
-    color:#1f2937;
-}
-
-/* Add a ghostly background to the entire main content wrapper for overall readability */
-main {
-    background-color: rgba(255, 255, 255, 0.7); /* 70% opaque white on the whole content area */
-    padding: 20px 0; /* Add some vertical padding */
-}
-
-/* 1. GHOSTLY BACKGROUND FIXES END HERE */
-
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
 .logo{display:none !important;}
 
-/* ===== NAVIGATION STYLING (Kept) ===== */
-.nav {
-    display: flex; 
-    align-items: center;
-    gap: 3rem; 
-}
-.nav a {
-    margin-right: 1.5rem; 
-}
-.nav a:last-child {
-    margin-right: 0;
-}
-.nav-toggle {
-    display: none !important; 
-}
-/* ========================================================= */
+/* Make the Hero/Page Title area transparent */
+.hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
 
-
-.hero-inner{padding:4rem 0}
-.price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
-.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
-/* Per-attendee registration callout */
-.reg-box{
-  border:2px solid #2563eb;           /* blue border */
-  background:#eff6ff;                  /* soft blue bg */
-  padding:12px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.reg-box .
+/* Make the
