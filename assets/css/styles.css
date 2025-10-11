@@ -1,7 +1,8 @@
 /* base styles */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
-a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
+/* ⚠️ CHANGE 1: Set default link color to black/dark gray (#1f2937) */
+a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
@@ -27,14 +28,15 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 .nav {
     display: flex; 
     align-items: center;
-    gap: 1rem;
+    /* ⚠️ CHANGE 2: Increased space (gap) between links */
+    gap: 1.5rem; 
 }
 .nav-toggle {
     display: none !important; 
 }
 /* ========================================================= */
 
-/* ⚠️ CHANGE HERE: Removed blue background and changed text color */
+/* CHANGE HERE: Removed blue background and changed text color */
 .hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
 
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
