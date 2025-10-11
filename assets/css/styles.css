@@ -13,13 +13,19 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
     position:sticky;
     top:0;
     background:#fff;
-    /* ⚠️ FINAL FIX: Setting border to 0 to ensure it is completely removed */
+    /* ⚠️ Final Fix for Blue Border */
     border-bottom:0px solid transparent !important; 
     z-index:10
 }
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
+/* ⚠️ CHANGE 2: Align remaining links to the left */
+.header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
 
-.logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
+/* ⚠️ CHANGE 1: Remove the logo and text */
+.logo{display:none !important;}
+
+/* The original logo styles are now redundant but kept below for reference */
+/* .logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px} */
+
 
 /* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY (Kept) ===== */
 .nav {
