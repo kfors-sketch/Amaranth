@@ -2,20 +2,20 @@
 *{box-sizing:border-box}
 /* FINAL FIX: Apply image directly to the body */
 html,body{
-    margin:0;
-    padding:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    color:#1f2937;
-    background:#fff;
-    
-    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
-    background-image: url('/assets/img/wallpaper.jpg');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%; 
-    background-attachment: fixed; 
-    opacity: 1; 
-    background-color: #f3f4f6;
+    margin:0;
+    padding:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:#1f2937;
+    background:#fff;
+    
+    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
+    background-image: url('/assets/img/wallpaper.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%; 
+    background-attachment: fixed; 
+    opacity: 1; 
+    background-color: #f3f4f6;
 }
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
@@ -30,14 +30,14 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 
 /* 🛑 LAST RESORT FIX: Ensure items inside the grid don't force full width */
 .grid-3 > *, .grid-2 > * {
-    width: auto !important;
+    width: auto !important;
 }
 
 .site-header{
     position:sticky;
     top:0;
     background:#fff;
-    border-bottom:0px solid transparent !important; 
+    border-bottom:0px solid transparent !important; 
     z-index:10
 }
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
@@ -47,56 +47,5 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .nav {
     display: flex; 
     align-items: center;
-    gap: 3rem; 
-}
-.nav a {
-    margin-right: 1.5rem; 
-}
-.nav a:last-child {
-    margin-right: 0;
-}
-.nav-toggle {
-    display: none !important; 
-}
-/* ========================================================= */
-
-.hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
-.price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
-.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
-/* Per-attendee registration callout */
-.reg-box{
-  border:2px solid #2563eb;           /* blue border */
-  background:#eff6ff;                  /* soft blue bg */
-  padding:12px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.reg-box .price-chip{
-  display:inline-block;
-  padding:2px 10px;
-  border-radius:9999px;
-  font-weight:700;
-  font-size:.85rem;
-  background:#1d4ed8;                  /* blue chip */
-  color:#fff;
-  margin-left:.5rem;
-}
-.reg-box .hint{ font-size:.85rem; color:#475569; }
-.reg-box .title{ font-weight:800; }
-.reg-box.active{
-  border-color:#16a34a;                /* green when checked */
-  background:#ecfdf5;                  /* soft green bg */
-}
-
-/* Ensure all main content is above the wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
-  position: relative;
-  z-index: 1; 
-}
-
-/* Optional: Don’t show wallpaper when printing */
-@media print {
-  body::before { display:none; }
+    gap: 3rem; 
 }
