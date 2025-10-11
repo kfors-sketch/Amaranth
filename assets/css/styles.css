@@ -10,12 +10,12 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 @media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
 
 .site-header{
-    position:sticky;
-    top:0;
-    background:#fff;
-    /* REMOVED THE BLUE BORDER HERE */
-    /* border-bottom:1px solid #e5e7eb; */ 
-    z-index:10
+    position:sticky;
+    top:0;
+    background:#fff;
+    /* ⚠️ FINAL FIX: Setting border to 0 to ensure it is completely removed */
+    border-bottom:0px solid transparent !important; 
+    z-index:10
 }
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
 
