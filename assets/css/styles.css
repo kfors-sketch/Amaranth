@@ -15,7 +15,8 @@ background:#f3f4f6;
 body[data-org="pa-2026"] {
 / BACKGROUND PROPERTIES (Distorted to fit, as requested) /
 / *** NOTE: This is the file path that must be correct! *** /
-background-image: url('/assets/img/wallpaper.jpg');
+/ Added ?v=1 to bust browser cache and force image reload /
+background-image: url('/assets/img/wallpaper.jpg?v=1');
 background-position: center center;
 background-repeat: no-repeat;
 background-size: 100% 100%;
@@ -50,7 +51,7 @@ z-index:10
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
 .logo{display:none !important;}
 
-/* ===== NAVIGATION STYLING (Kept) ===== /
+/* ===== NAVIGATION STYLING (Kept) ===== */
 .nav {
 display: flex;
 align-items: center;
@@ -66,7 +67,7 @@ margin-right: 0;
 display: none !important;
 
 }
-/ ========================================================= */
+/* ========================================================= */
 
 .hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
