@@ -7,18 +7,17 @@ html,body{
     padding:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     color:#1f2937;
-    /* REMOVED: conflicting background-color */
+    /* Ensure body and html backgrounds are transparent so the wallpaper shows */
     background:transparent; 
     background-color: #f3f4f6; /* Fallback */
 }
 
-/* 1. Set the Wallpaper on the HTML element */
+/* 1. Set the Wallpaper on the HTML element to be at the true background */
 html {
-    /* BACKGROUND PROPERTIES */
     background-image: url('/assets/img/wallpaper.jpg');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: cover; /* Use 'cover' for better scaling */
+    background-size: cover; /* This makes the image fill the screen */
     background-attachment: fixed; 
 }
 
@@ -30,9 +29,9 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    /* 50% opaque white overlay */
+    /* 50% opaque white overlay, placed under the content */
     background-color: rgba(255, 255, 255, 0.5); 
-    z-index: -1; /* Place it under the actual page content */
+    z-index: -1; 
 }
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
@@ -49,6 +48,16 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
     box-shadow:0 1px 2px rgba(0,0,0,.03);
 }
 
+/* 3. COLUMN RESTORATION - Re-enabling grid display */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid-3 > *, .grid-2 > *, .grid-4 > * {
+    width: auto; /* Ensures grid items share space correctly */
+}
+/* END COLUMN RESTORATION */
+
+
 /* NAVIGATION & MAIN CONTENT: Set to transparent so the new ghostly background is visible */
 .site-header{
     position:sticky;
@@ -63,68 +72,17 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
 main {background: transparent; padding: 20px 0;} /* Transparent main content area */
 
-/* GRID DEFINITIONS (Kept) */
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
-.grid-3 > *, .grid-2 > *, .grid-4 > * {
-    width: auto;
-}
-
-/* ===== NAVIGATION STYLING (Kept) ===== */
-.nav {
-    display: flex; 
-    align-items: center;
-    gap: 3rem; 
-}
-.nav a {
-    margin-right: 1.5rem; 
-}
-.nav a:last-child {
-    margin-right: 0;
-}
-.nav-toggle {
-    display: none !important; 
-}
-/* ===================================== */
-
+/* ===== REST OF CSS (Kept) ===== */
+.nav { display: flex; gap: 3rem; }
+.nav a { margin-right: 1.5rem; }
+.nav a:last-child { margin-right: 0; }
+.nav-toggle { display: none !important; }
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
 .form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
-
-/* Per-attendee registration callout (Kept) */
-.reg-box{
-  border:2px solid #2563eb;
-  background:#eff6ff;
-  padding:12px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.reg-box .price-chip{
-  display:inline-block;
-  padding:2px 10px;
-  border-radius:9999px;
-  font-weight:700;
-  font-size:.85rem;
-  background:#1d4ed8;
-  color:#fff;
-  margin-left:.5rem;
-}
+.reg-box{ border:2px solid #2563eb; background:#eff6ff; padding:12px; border-radius:12px; display:flex; align-items:center; gap:12px; }
+.reg-box .price-chip{ display:inline-block; padding:2px 10px; border-radius:9999px; font-weight:700; font-size:.85rem; background:#1d4ed8; color:#fff; margin-left:.5rem; }
 .reg-box .hint{ font-size:.85rem; color:#475569; }
 .reg-box .title{ font-weight:800; }
-.reg-box.active{
-  border-color:#16a34a;
-  background:#ecfdf5;
-}
-
-/* Ensure all main content is above the wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
-  position: relative;
-  z-index: 1; 
-}
-
-/* Optional: Don’t show wallpaper when printing */
-@media print {
-  body::before { display:none; }
-}
+.reg-box.active{ border-color:#16a34a; background:#ecfdf5; }
+.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer { position: relative; z-index: 1; }
+@media print { body::before { display:none; } }
