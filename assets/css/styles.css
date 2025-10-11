@@ -13,29 +13,27 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
     position:sticky;
     top:0;
     background:#fff;
-    /* FINAL FIX: Setting border to 0 to ensure it is completely removed */
+    /* Border removed */
     border-bottom:0px solid transparent !important; 
     z-index:10
 }
-/* CHANGE: Align remaining links to the left */
+/* Links aligned left */
 .header-inner{display:flex;align-items:center;justify-content:flex-start;padding:.75rem 0}
 
-/* CHANGE: Remove the logo and text */
+/* Logo removed */
 .logo{display:none !important;}
 
 /* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY (Kept) ===== */
 .nav {
     display: flex; 
     align-items: center;
-    /* Increased gap, but margin on 'a' is the main fix now */
     gap: 3rem; 
 }
 
-/* ⚠️ NEW FIX: Force margin-right on the links themselves */
+/* Added space between links */
 .nav a {
     margin-right: 1.5rem; 
 }
-/* NEW FIX: Remove the margin from the last link to prevent extra space on the right */
 .nav a:last-child {
     margin-right: 0;
 }
@@ -45,7 +43,7 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 }
 /* ========================================================= */
 
-/* CHANGE HERE: Removed blue background and changed text color */
+/* Blue section below header removed, text turned dark gray */
 .hero{background:transparent;color:#1f2937}.hero-inner{padding:4rem 0}
 
 .price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
@@ -80,9 +78,10 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 /* ==== Ghost / faint wallpaper (site-wide) - CONSOLIDATED FIX ==== */
 :root{
   /* Consolidated and fixed defaults */
+  /* ⚠️ CHANGE 1: We will rely on this default path since it works */
   --wallpaper-url: url('/assets/img/wallpaper.jpg'); 
-  --wallpaper-opacity: 0.1; /* Increased opacity for visibility */
-  --wallpaper-size: cover; /* Use cover to fill the screen */
+  --wallpaper-opacity: 0.1; 
+  --wallpaper-size: cover; 
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
 }
@@ -94,10 +93,10 @@ body::before{
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1; /* CRITICAL FIX: Put the wallpaper BEHIND the content */
+  z-index: -1; 
   pointer-events: none;
 
-  /* Apply the visual properties */
+  /* Apply the visual properties (uses the working path from :root) */
   background-image: var(--wallpaper-url);
   background-position: var(--wallpaper-position);
   background-repeat: var(--wallpaper-repeat);
@@ -108,17 +107,13 @@ body::before{
   background-color: rgba(0,0,0,0.06); 
 }
 
-/* Per-org overrides */
-body[data-org="pa-2026"]::before {
-  /* TEMPORARY TEST: Using the default wallpaper to check file path integrity */
-  --wallpaper-url: url('/assets/img/wallpaper.jpg');
-}
+/* ⚠️ CHANGE 2: Removed the redundant 'pa-2026' override, allowing the default working image to apply.
+   The 'supreme-2027' override is kept for its unique image. */
 body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
 /* Ensure all main content is above the wallpaper */
-/* Z-index 1 is sufficient as the wallpaper is now Z-index -1 */
 .site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
   position: relative;
   z-index: 1; 
