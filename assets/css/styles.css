@@ -56,7 +56,7 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
     margin-right: 0;
 }
 .nav-toggle {
-    display: none !important;  /* THIS RULE HIDES THE HAMBURGER */
+    display: none !important;  
 }
 /* ========================================================= */
 
@@ -101,8 +101,16 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
   body::before { display:none; }
 }
 
-/* 💀 FINAL OVERRIDE: Ensure the hamburger is hidden 💀 */
-/* This block is included to maximize certainty it will not appear on any device. */
-.nav-toggle {
+/* 💀 FINAL AGGRESSIVE HAMBURGER OVERRIDE 💀 */
+/* This rule targets all known variations of mobile toggles to ensure they are hidden on PC */
+.nav-toggle, 
+.menu-toggle, 
+.navbar-toggler, 
+.mobile-nav-toggle, 
+.site-header button,
+.site-header a[aria-expanded],
+.header-inner button,
+.header-inner a[aria-controls]
+{
     display: none !important;
 }
