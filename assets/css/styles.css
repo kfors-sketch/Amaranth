@@ -1,6 +1,6 @@
 /* base styles */
 *{box-sizing:border-box}
-/* ⚠️ CHANGE: Set background-size to 100% 100% to fill width AND height (will cause distortion) */
+/* ⚠️ FINAL FIX: Apply image directly to the body */
 html,body{
     margin:0;
     padding:0;
@@ -12,7 +12,6 @@ html,body{
     background-image: url('/assets/img/wallpaper.jpg');
     background-position: center center;
     background-repeat: no-repeat;
-    /* 🛑 KEY CHANGE: Forces image to fill the page, which will distort it */
     background-size: 100% 100%; 
     background-attachment: fixed; 
     opacity: 1; 
@@ -20,14 +19,23 @@ html,body{
     /* Fallback background color to fill gaps around the image */
     background-color: #f3f4f6;
 }
-/* ⚠️ The rest of the CSS remains the same as our previous successful fix. */
+
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 .card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
-@media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
+
+/* 🛑 ORIGINAL GRID DEFINITION */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+
+/* ⚠️ ADJUSTED MEDIA QUERY: Removed the line that collapses the grid columns.
+   This ensures the grid layout stays visible even on smaller screens. */
+@media(max-width:800px){
+    /* .grid-3,.grid-2{grid-template-columns:1fr} <- THIS LINE WAS REMOVED */
+}
+
 
 .site-header{
     position:sticky;
