@@ -14,11 +14,11 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
 
 .logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
 
-/* ===== FIXES FOR HAMBURGER MENU / NAVIGATION DISPLAY (Kept) ===== */
+/* NAVIGATION STYLING */
 .nav {
     display: flex; 
     align-items: center;
-    gap: 1rem;
+    gap: 2rem; /* Increased space between links */
 }
 .nav-toggle {
     display: none !important; 
@@ -89,7 +89,7 @@ body::before{
 /* Per-org overrides */
 body[data-org="pa-2026"]::before {
   /* ⚠️ TEMPORARY TEST: Using the default wallpaper to check file path integrity */
-  --wallpaper-url: url('/assets/img/wallpaper.jpg');
+  --wallpaper-url: url('/assets/img/wallpaper.jpg');
 }
 body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
