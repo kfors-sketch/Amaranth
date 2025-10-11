@@ -1,22 +1,37 @@
 /* base styles */
 *{box-sizing:border-box}
-/* FINAL FIX: Apply image directly to the body */
+
+/* --- RESTORED WALLPAPER METHOD --- */
 html,body{
     margin:0;
     padding:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     color:#1f2937;
-    background:#fff;
-    
-    /* BACKGROUND PROPERTIES (Distorted to fit, as requested) */
+    /* Use a solid background color for the body */
+    background:#f3f4f6;
+    /* Ensure body can contain the pseudo-element */
+    position: relative;
+}
+
+/* 🛑 WALLPAPER: Define the background image using body::before for maximum control */
+body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1; /* Puts it behind all content */
+    pointer-events: none;
+
+    /* Apply image properties */
     background-image: url('/assets/img/wallpaper.jpg');
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 100% 100%; 
-    background-attachment: fixed; 
-    opacity: 1; 
-    background-color: #f3f4f6;
+    /* Use 'cover' to fill the page, which prevents white space */
+    background-size: cover; 
+    /* This is the faint effect */
+    opacity: 0.15; 
 }
+/* ---------------------------------- */
+
 
 a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
@@ -24,14 +39,16 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 .card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 
-/* 🛑 GRID FIX: Forces columns using !important */
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr) !important;gap:1rem}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr) !important;gap:1rem}
+/* 🛑 GRID FIX: Highest priority rules to force columns */
+.grid-3{display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:1rem !important;}
+.grid-2{display:grid !important; grid-template-columns:repeat(2,1fr) !important; gap:1rem !important;}
 
-/* 🛑 LAST RESORT FIX: Ensure items inside the grid don't force full width */
+/* Ensure child elements inside the grid don't break the layout */
 .grid-3 > *, .grid-2 > * {
     width: auto !important;
 }
+/* ---------------------------------------------------- */
+
 
 .site-header{
     position:sticky;
@@ -90,7 +107,7 @@ a{color:#1f2937;text-decoration:none}a:hover{text-decoration:underline}
   background:#ecfdf5;                  /* soft green bg */
 }
 
-/* Ensure all main content is above the wallpaper */
+/* Ensure all main content is above the wallpaper (this is crucial when using body::before) */
 .site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
   position: relative;
   z-index: 1; 
