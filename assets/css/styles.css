@@ -234,3 +234,111 @@ body[data-org="supreme-2027"]::after {
 
 /* Safety: ensure no nav separators appear */
 .nav a + a::before { content: none !important; }
+
+/* =============================================================================
+   ===== Shop page =====
+   Body must have class="shop" on shop.html
+============================================================================= */
+
+/* Hide Registration & Directory links on Shop page only */
+body.shop .nav a[href*="registration"],
+body.shop .nav a[href*="directory"] { display: none !important; }
+
+/* Stack & center the logo above the long title line */
+body.shop .header-inner { display:block; } /* ignore flex row stack edge cases */
+body.shop .logo{
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+body.shop .logo img{
+  width: clamp(90px, 12vw, 160px);
+  height: auto;
+}
+body.shop .logo span{
+  text-align:center;
+  font-weight:700;
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  color:#1f2937;
+}
+
+/* Center the "Shop" title */
+body.shop main h1{
+  text-align:center;
+  margin: 20px 0 14px;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+}
+
+/* Responsive product grid (up to 15 items) */
+.shop-grid{
+  --card-gap: 16px;
+  --card-radius: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--card-gap);
+  padding: 10px 14px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.item{
+  border: 1px solid #e5e7eb;
+  border-radius: var(--card-radius);
+  padding: 12px;
+  text-align: center;
+  background: #fff;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.item:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+.thumb{ display:block; border:0; padding:0; background:none; cursor:zoom-in; width:100%; }
+.thumb img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:10px;
+}
+.item-name{ margin:10px 0 4px; font-size:1rem; font-weight:700; }
+.item-price{ margin:0; font-weight:600; opacity:.9; }
+
+/* Lightbox */
+.lightbox[hidden]{ display:none; }
+.lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:grid;
+  place-items:center;
+  padding:20px;
+  z-index:1000;
+}
+.lightbox-img{
+  max-width:min(92vw, 1000px);
+  max-height:82vh;
+  border-radius:12px;
+  display:block;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  background:#fff;
+}
+.lightbox-caption{
+  margin-top:10px;
+  color:#fff;
+  text-align:center;
+  font-weight:600;
+}
+.lightbox-close{
+  position:fixed;
+  top:14px;
+  right:16px;
+  font-size:32px;
+  line-height:1;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
