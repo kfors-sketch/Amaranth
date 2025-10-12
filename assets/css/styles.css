@@ -119,7 +119,7 @@ nav a{ font-weight:500; }
 /* ===== Wallpaper: full image + edge-to-edge fill (two layers) ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.38;            /* brighter sharp layer (was 0.28) */
+  --wallpaper-opacity: 0.38;            /* brighter sharp layer */
   --wallpaper-position: center center;  /* tweak if needed */
 }
 
@@ -140,7 +140,7 @@ body::before{
 
   filter: blur(18px);
   transform: scale(1.08);               /* hide blur edges */
-  opacity: 0.10;                        /* a little lighter than before (was 0.14) */
+  opacity: 0.10;                        /* lighter blur layer */
 }
 
 /* Layer 2: sharp full image (no cropping) */
@@ -215,15 +215,17 @@ body[data-org="supreme-2027"]::after {
   max-width: 360px;
 }
 
-/* Desktop: push banquet grid further left on wider screens */
+/* === Banquets: apply your measured right shift (108px) === */
+:root { --banquets-shift-lg: 108px; }   /* from DevTools measurement */
+
 @media (min-width: 1024px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(-60px); }
+  [data-page="banquets"] .grid-2{ transform: translateX(var(--banquets-shift-lg)); }
 }
 @media (min-width: 1280px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(-100px); }
+  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) + 32px)); }
 }
 @media (min-width: 1536px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(-140px); }
+  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) + 64px)); }
 }
 
 /* Safety: ensure no nav separators appear */
