@@ -3,7 +3,7 @@
 html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
 
 /* ===== Links ===== */
-a{color:black;text-decoration:none}   /* changed from blue (#1d4ed8) to black */
+a{color:black;text-decoration:none}   /* changed from blue to black */
 a:hover{text-decoration:underline}
 a:visited{color:black}                /* keeps links black even after clicking */
 
@@ -23,12 +23,36 @@ nav a {
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
 @media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
-.site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
+
+/* Header over wallpaper (transparent background) */
+.site-header{
+  position:sticky;
+  top:0;
+  background:transparent !important;  /* was #fff; now lets wallpaper show */
+  border-bottom:1px solid #e5e7eb;
+  z-index:10
+}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
 .logo{display:flex;align-items:center;gap:.5rem;font-weight:700}
 .logo img{width:32px;height:32px}
-.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}
-.hero-inner{padding:4rem 0}
+
+/* Hero over wallpaper (no color block) */
+.hero{
+  background:transparent !important;  /* was gradient blue */
+  color:inherit;                       /* use normal text color */
+}
+.hero-inner{padding:2.5rem 0}          /* a bit of breathing room */
+
+/* Centered black title to place over wallpaper */
+.session-title{
+  margin:0 0 .5rem 0;
+  text-align:center;
+  font-size:clamp(1.25rem,2.5vw,2rem);
+  font-weight:800;
+  color:#000;                          /* black per request */
+  line-height:1.25;
+}
+
 .price{font-weight:700}
 .tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
 .form label{display:block;margin-bottom:.75rem}
