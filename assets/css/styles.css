@@ -1,21 +1,43 @@
-/* base styles */*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
-a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
-.container{width:min(1100px,92%);margin:0 auto}.mt{margin-top:1rem}.mt-lg{margin-top:2rem}
+/* base styles */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
+
+/* ===== Links ===== */
+a{color:black;text-decoration:none}   /* changed from blue (#1d4ed8) to black */
+a:hover{text-decoration:underline}
+a:visited{color:black}                /* keeps links black even after clicking */
+
+/* Navigation links spacing */
+nav a {
+  margin-right: 18px;                 /* spacing between links */
+  font-weight: 500;
+}
+
+/* Container + layout stuff */
+.container{width:min(1100px,92%);margin:0 auto}
+.mt{margin-top:1rem}
+.mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
 .btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 .card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
 @media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
 .site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0}
-.logo{display:flex;align-items:center;gap:.5rem;font-weight:700}.logo img{width:32px;height:32px}
-.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}.hero-inner{padding:4rem 0}
-.price{font-weight:700}.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
-.form label{display:block;margin-bottom:.75rem}.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:700}
+.logo img{width:32px;height:32px}
+.hero{background:linear-gradient(100deg,#1d4ed8,#60a5fa);color:#fff}
+.hero-inner{padding:4rem 0}
+.price{font-weight:700}
+.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
+.form label{display:block;margin-bottom:.75rem}
+.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
+
 /* Per-attendee registration callout */
 .reg-box{
-  border:2px solid #2563eb;           /* blue border */
-  background:#eff6ff;                  /* soft blue bg */
+  border:2px solid #2563eb;
+  background:#eff6ff;
   padding:12px;
   border-radius:12px;
   display:flex;
@@ -28,25 +50,26 @@ a{color:#1d4ed8;text-decoration:none}a:hover{text-decoration:underline}
   border-radius:9999px;
   font-weight:700;
   font-size:.85rem;
-  background:#1d4ed8;                  /* blue chip */
+  background:#1d4ed8;
   color:#fff;
   margin-left:.5rem;
 }
 .reg-box .hint{ font-size:.85rem; color:#475569; }
 .reg-box .title{ font-weight:800; }
 .reg-box.active{
-  border-color:#16a34a;                /* green when checked */
-  background:#ecfdf5;                  /* soft green bg */
+  border-color:#16a34a;
+  background:#ecfdf5;
 }
-/* ==== Ghost / faint wallpaper (site-wide) ==== */
+
+/* ===== Wallpaper ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.06;
-  --wallpaper-size: 900px;
+  --wallpaper-opacity: 0.18;
+  --wallpaper-size: cover;
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
 }
-
+body{ position:relative }
 body::before{
   content:"";
   position:fixed;
@@ -58,68 +81,16 @@ body::before{
   background-repeat: var(--wallpaper-repeat);
   background-size: var(--wallpaper-size);
   opacity: var(--wallpaper-opacity);
+  background-color: rgba(0,0,0,0.06); /* fallback tint */
 }
-
-body[data-org="pa-2026"]::before {
-  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
-}
-
-body[data-org="supreme-2027"]::before {
-  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
-}
-
-
-/* Make sure real content stays above the wallpaper */
-.site-header, main, .site-footer, .container, .card, .nav, .nav-toggle {
-  position: relative;
-  z-index: 1;
-}
-
-/* Optional: Don’t show wallpaper when printing */
-@media print {
-  body::before { display:none; }
-}
-/* ===== Wallpaper: debug-strong & stacking fix ===== */
-:root{
-  --wallpaper-url: url('/assets/img/wallpaper.jpg'); /* default */
-  --wallpaper-opacity: 0.18;  /* temporarily stronger so it's obvious */
-  --wallpaper-size: cover;    /* fill screen */
-  --wallpaper-repeat: no-repeat;
-  --wallpaper-position: center center;
-}
-
-/* Create a stacking context so ::before sits under content but above body bg */
-body { position: relative; }
-
-body::before{
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;                  /* wallpaper layer */
-  pointer-events: none;
-
-  /* image + a faint tint so you can tell it's working even if image path is wrong */
-  background-image: var(--wallpaper-url);
-  background-position: var(--wallpaper-position);
-  background-repeat: var(--wallpaper-repeat);
-  background-size: var(--wallpaper-size);
-  opacity: var(--wallpaper-opacity);
-
-  /* fallback tint: comment this out later */
-  background-color: rgba(0,0,0,0.06);
-}
-
-/* Ensure all main content is above the wallpaper */
 .site-header, main, .site-footer, .container, .card, .nav, .nav-toggle, header, footer {
   position: relative;
   z-index: 1;
 }
-
-/* Per-org overrides (optional: only if you want different images) */
 body[data-org="pa-2026"]::before {
   --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
 }
 body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
-
+@media print { body::before { display:none; } }
