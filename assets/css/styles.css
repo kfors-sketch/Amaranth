@@ -1,6 +1,13 @@
 /* base styles */
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1f2937;background:#fff}
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100vh; /* ensure full viewport baseline */
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:#1f2937;
+  background:#fff;
+}
 
 /* ===== Links ===== */
 a{color:black;text-decoration:none}
@@ -26,7 +33,7 @@ nav a{ font-weight:500; }
   position:sticky;
   top:0;
   background:transparent !important; /* let wallpaper show */
-  border-bottom:0;                   /* removed line under header */
+  border-bottom:0;                   /* no line */
   z-index:10;
 }
 .header-inner{
@@ -44,7 +51,7 @@ nav a{ font-weight:500; }
   align-items:center;
   gap:.5rem;
   font-weight:700;
-  margin:0 auto;            /* ensure centering */
+  margin:0 auto;
 }
 .logo img{width:32px;height:32px}
 
@@ -106,34 +113,31 @@ nav a{ font-weight:500; }
   background:#ecfdf5;
 }
 
-/* ===== Wallpaper layer ===== */
+/* ===== Wallpaper layer (fits PC & mobile) ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.28;     /* slightly clearer */
+  --wallpaper-opacity: 0.28;     /* slightly clearer as requested */
   --wallpaper-size: cover;
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
 }
+
 body{ position:relative }
 body::before{
   content:"";
-  position:fixed;
-  inset:0;
-  z-index:0;                       /* wallpaper behind content */
+  position:fixed;                 /* pin to viewport */
+  inset:0;                        /* full screen */
+  z-index:0;                      /* behind content */
   pointer-events:none;
+
+  /* Fit the screen on all devices */
   background-image: var(--wallpaper-url);
-  background-size: cover;          /* always cover screen */
-  background-repeat: no-repeat;    /* no tile */
+  background-size: cover;         /* always cover */
+  background-repeat: no-repeat;
   background-position: center center;
-  background-attachment: fixed;    /* stable on desktop scroll */
-  image-rendering: auto;           /* clean scaling */
+  background-attachment: scroll;  /* avoid desktop cover glitches */
+
   opacity: var(--wallpaper-opacity);
-}
-/* Smooth behavior on mobile (workaround for fixed bug) */
-@media (max-width: 768px) {
-  body::before {
-    background-attachment: scroll; /* prevent jank on mobile */
-  }
 }
 
 /* Ensure all main content is above wallpaper */
@@ -141,12 +145,16 @@ body::before{
   position: relative;
   z-index: 1;
 }
+
+/* Per-site wallpaper overrides */
 body[data-org="pa-2026"]::before {
   --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
 }
 body[data-org="supreme-2027"]::before {
   --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
 }
+
+/* Print */
 @media print { body::before { display:none; } }
 
 /* ===== New hero text styles ===== */
