@@ -360,3 +360,29 @@ body.shop .item-name,
 body.shop .item-price{
   color:#1f2937;
 }
+
+/* =============================================================================
+   ===== Order page (match Banquets frosted style)
+   Requires: <body data-page="order">
+============================================================================= */
+
+/* Hide Registration & Directory links on Order page only */
+[data-page="order"] .nav a[href*="registration"],
+[data-page="order"] .nav a[href*="directory"] { display: none !important; }
+
+/* Center the "Order" title like others */
+[data-page="order"] h1{
+  text-align:center;
+  margin: 20px 0 14px;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+}
+
+/* Frosted cards identical to Banquets */
+[data-page="order"] .card{
+  background: rgba(255,255,255,0.40);
+  border-color: rgba(229,231,235,0.45);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+}
