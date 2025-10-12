@@ -511,3 +511,84 @@ body.shop .item-price{
 [data-page="order"] #attendee-list .row{
   margin: 0;
 }
+/* ===== Order: Attendee block = Purchaser layout (3-up first row) ===== */
+[data-page="order"] #attendee-list > *{
+  /* turn each attendee card into a tidy 3-col grid on desktop */
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(180px, 1fr);
+  grid-auto-rows: auto;
+  gap: 0.75rem 1rem;
+  align-items: start;
+
+  /* keep it a bit shorter than section cards */
+  padding: 0.7rem 0.9rem;
+}
+
+/* Heading spans full width, stays compact */
+[data-page="order"] #attendee-list > * h3,
+[data-page="order"] #attendee-list > * h4{
+  grid-column: 1 / -1;
+  margin: 0 0 .4rem 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Labels = neat grid items */
+[data-page="order"] #attendee-list > * label{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Inputs consistent + compact */
+[data-page="order"] #attendee-list > * input[type="text"],
+[data-page="order"] #attendee-list > * input[type="email"],
+[data-page="order"] #attendee-list > * input[type="tel"],
+[data-page="order"] #attendee-list > * input[type="number"],
+[data-page="order"] #attendee-list > * select,
+[data-page="order"] #attendee-list > * textarea{
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05) inset;
+}
+
+/* Force the FIRST THREE fields (Full name, Email, Title) onto the first row */
+[data-page="order"] #attendee-list > * label:nth-of-type(1){ grid-column: 1; }
+[data-page="order"] #attendee-list > * label:nth-of-type(2){ grid-column: 2; }
+[data-page="order"] #attendee-list > * label:nth-of-type(3){ grid-column: 3; }
+
+/* All other fields flow across the grid neatly */
+[data-page="order"] #attendee-list > * label:nth-of-type(n+4){
+  grid-column: auto;
+}
+
+/* Tighter gaps if your generator nests grid rows */
+[data-page="order"] #attendee-list > * .grid-2,
+[data-page="order"] #attendee-list > * .grid-3{
+  gap: 0.75rem 1rem !important;
+}
+
+/* Smaller default textarea height (if present) */
+[data-page="order"] #attendee-list > * textarea{
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Mobile: stack everything to one column */
+@media (max-width: 800px){
+  [data-page="order"] #attendee-list > *{
+    grid-template-columns: 1fr;
+  }
+  [data-page="order"] #attendee-list > * label:nth-of-type(1),
+  [data-page="order"] #attendee-list > * label:nth-of-type(2),
+  [data-page="order"] #attendee-list > * label:nth-of-type(3){
+    grid-column: 1 !important;
+  }
+}
