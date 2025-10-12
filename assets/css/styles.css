@@ -204,15 +204,22 @@ body[data-org="supreme-2027"]::after {
   gap: 1.25rem;
 }
 
-/* Transparent banquet cards over wallpaper (kept) */
+/* Transparent banquet cards over wallpaper (more see-through) */
 [data-page="banquets"] .card{
-  background: rgba(255,255,255,0.72);
-  border-color: rgba(229,231,235,0.6);
+  background: rgba(255,255,255,0.60);   /* was 0.72 */
+  border-color: rgba(229,231,235,0.45); /* softer border */
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   backdrop-filter: saturate(120%) blur(2px);
   -webkit-backdrop-filter: saturate(120%) blur(2px);
   width: 100%;
   max-width: 360px;
+}
+
+/* Desktop: nudge banquet grid slightly left */
+@media (min-width: 1024px) {
+  [data-page="banquets"] .grid-2{
+    transform: translateX(-20px); /* adjust -10 to -40px if desired */
+  }
 }
 
 /* Safety: ensure no nav separators appear */
