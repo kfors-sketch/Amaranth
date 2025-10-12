@@ -132,12 +132,10 @@ body::before{
   inset:0;
   z-index:0;                            /* behind content */
   pointer-events:none;
-
   background-image: var(--wallpaper-url);
   background-size: cover;               /* fills entire viewport */
   background-repeat: no-repeat;
   background-position: var(--wallpaper-position);
-
   filter: blur(18px);
   transform: scale(1.08);               /* hide blur edges */
   opacity: 0.10;                        /* lighter blur layer */
@@ -150,7 +148,6 @@ body::after{
   inset:0;
   z-index:0;                            /* behind content */
   pointer-events:none;
-
   background-image: var(--wallpaper-url);
   background-size: contain;             /* show 100% of image */
   background-repeat: no-repeat;
@@ -196,18 +193,25 @@ body[data-org="supreme-2027"]::after {
   color:#222;
 }
 
-/* ===== Banquets page: center ONLY the banquet cards ===== */
+/* ===== Banquets page ===== */
+[data-page="banquets"] .page-title{
+  text-align:center;         /* center the "Banquets" heading */
+  margin:0 0 1rem 0;
+  font-weight:800;
+}
+
+/* Center ONLY the banquet cards grid */
 [data-page="banquets"] .grid-2{
-  display: grid;             /* ensure grid context */
+  display: grid;
   justify-content: center;   /* center grid tracks */
   justify-items: center;     /* center each card */
   gap: 1.25rem;
 }
 
-/* Transparent banquet cards over wallpaper (more see-through) */
+/* Transparent banquet cards over wallpaper */
 [data-page="banquets"] .card{
-  background: rgba(255,255,255,0.40);   /* more transparent */
-  border-color: rgba(229,231,235,0.45); /* softer border */
+  background: rgba(255,255,255,0.40);
+  border-color: rgba(229,231,235,0.45);
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   backdrop-filter: saturate(120%) blur(2px);
   -webkit-backdrop-filter: saturate(120%) blur(2px);
@@ -215,8 +219,8 @@ body[data-org="supreme-2027"]::after {
   max-width: 360px;
 }
 
-/* === Banquets: move LEFT by your measured amount === */
-:root { --banquets-shift-lg: -190px; }  /* negative = left */
+/* Move LEFT by your chosen amount (negative = left) */
+:root { --banquets-shift-lg: -205px; }
 
 @media (min-width: 1024px) {
   [data-page="banquets"] .grid-2{ transform: translateX(var(--banquets-shift-lg)) !important; }
