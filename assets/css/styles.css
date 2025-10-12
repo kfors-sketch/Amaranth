@@ -17,7 +17,7 @@ a:visited{color:black}
 /* ===== Navigation (centered) ===== */
 .nav{
   display:flex;
-  justify-content:center;
+  justify-content:center;   /* center the links */
   flex-wrap:wrap;
   align-items:center;
   gap:18px;
@@ -32,8 +32,8 @@ nav a{ font-weight:500; }
 .site-header{
   position:sticky;
   top:0;
-  background:transparent !important;
-  border-bottom:0;
+  background:transparent !important; /* let wallpaper show */
+  border-bottom:0;                    /* no line under header */
   z-index:10;
 }
 .header-inner{
@@ -113,44 +113,44 @@ nav a{ font-weight:500; }
   background:#ecfdf5;
 }
 
-/* ===== Wallpaper layer (fit mobile + full image on desktop) ===== */
+/* ===== Wallpaper: whole image on desktop, full-bleed on phones ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.28;         /* slightly clearer */
-  --wallpaper-repeat: no-repeat;
-  --wallpaper-position: center center;
+  --wallpaper-opacity: 0.28;           /* your chosen clarity */
+  --wallpaper-position: center center; /* desktop focal point */
 }
 
 html, body { min-height: 100vh; }
 body { position: relative; }
 
+/* Default = desktop/tablet: show the entire image (no cropping) */
 body::before{
   content:"";
-  position:fixed;                    /* pin to viewport */
-  inset:0;                           /* full screen */
-  z-index:0;                         /* behind content */
+  position:fixed;                      /* pin to viewport */
+  inset:0;                             /* full screen */
+  z-index:0;                           /* behind content */
   pointer-events:none;
 
   background-image: var(--wallpaper-url);
+  background-size: contain;            /* show 100% of the image */
   background-repeat: no-repeat;
   background-position: var(--wallpaper-position);
-
-  /* Default (phones/tablets): fill the screen */
-  background-size: cover;
+  background-color:#fff;               /* letterbox fill to match page bg */
 
   opacity: var(--wallpaper-opacity);
 }
 
-/* Desktop & larger: show the entire image (no cropping) */
-@media (min-width: 1024px) {
+/* Phones: fill the screen edge-to-edge (may crop slightly) */
+@media (max-width: 768px) {
   body::before{
-    background-size: contain;        /* show whole image */
-    background-position: center 40%; /* nudge focal point; tweak if needed */
-    background-color: #fff;          /* letterbox fill around image */
+    background-size: cover;            /* fill */
+    background-position: center 45%;   /* tweak focal point for mobile */
+    background-color: transparent;     /* no visible bars on phones */
+    position: absolute;                /* smoother mobile scrolling */
   }
 }
 
-/* Ensure content sits above wallpaper */
+/* Keep site content above wallpaper */
 .site-header, main, .site-footer, .container, .card, .nav, header, footer {
   position: relative;
   z-index: 1;
@@ -158,14 +158,11 @@ body::before{
 
 /* Per-site overrides */
 body[data-org="pa-2026"]::before {
-  --wallpaper-url: url('/assets/img/pa-2026-watermark.jpg');
+  background-image: url('/assets/img/pa-2026-watermark.jpg');
 }
 body[data-org="supreme-2027"]::before {
-  --wallpaper-url: url('/assets/img/supreme-2027-watermark.jpg');
+  background-image: url('/assets/img/supreme-2027-watermark.jpg');
 }
-
-/* Print: no wallpaper */
-@media print { body::before { display:none; } }
 
 /* ===== New hero text styles ===== */
 .welcome-text{
