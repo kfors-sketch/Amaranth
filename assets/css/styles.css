@@ -378,13 +378,28 @@ body.shop .item-price{
   font-weight: 800;
 }
 
-/* Frosted cards identical to Banquets */
+/* Frosted cards identical to Banquets — now applied to ALL cards with uniform padding/radius */
 [data-page="order"] .card{
   background: rgba(255,255,255,0.40);
   border-color: rgba(229,231,235,0.45);
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   backdrop-filter: saturate(120%) blur(2px);
   -webkit-backdrop-filter: saturate(120%) blur(2px);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+/* Uniform spacing between cards */
+[data-page="order"] .card + .card{
+  margin-top: 2rem;
+}
+
+/* Subtle hover lift */
+@media (hover:hover){
+  [data-page="order"] .card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+  }
 }
 
 /* ===== Order page layout improvements (Spacing: B, Inputs: 2) ===== */
