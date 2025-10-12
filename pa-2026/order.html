@@ -5,36 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session" />
   <link rel="icon" href="/assets/img/favicon.ico" type="image/ico+xml" />
-  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <!-- cache-bust the CSS just in case -->
+  <link rel="stylesheet" href="/assets/css/styles.css?v=4" />
   <title>2026 Grand Court of Pennsylvania • Order of the Amaranth • Annual Session</title>
 
-  <!-- Order-page header tweaks (logo stacked/centered, hide reg+directory, frosted cards) -->
+  <!-- Inline, page-scoped fixes so they apply even if external CSS is cached -->
   <style>
-    [data-page="order"] .site-header { text-align: center; }
-    [data-page="order"] .header-inner { display: block; }
-    [data-page="order"] .logo{
+    /* Scope everything to the Order page */
+    body[data-page="order"] .site-header { text-align: center; }
+    body[data-page="order"] .header-inner { display: block; }
+    body[data-page="order"] .logo{
       display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
     }
-    [data-page="order"] .logo span{
+    body[data-page="order"] .logo img{
+      width: clamp(36px, 3.2vw, 48px);
+      height: clamp(36px, 3.2vw, 48px);
+    }
+    body[data-page="order"] .logo span{
       display:block; text-align:center; font-weight:700;
       font-size:clamp(1.05rem, 2.2vw, 1.4rem); color:#1f2937;
     }
-    [data-page="order"] .nav a[href*="registration"],
-    [data-page="order"] .nav a[href*="directory"]{ display:none !important; }
-    [data-page="order"] h1{
+
+    /* Hide Registration & Directory on this page */
+    body[data-page="order"] .nav a[href*="registration"],
+    body[data-page="order"] .nav a[href*="directory"]{ display:none !important; }
+
+    /* Center the page title */
+    body[data-page="order"] h1{
       text-align:center; margin:20px 0 14px;
       font-size:clamp(1.5rem, 2.6vw, 2rem); font-weight:800;
     }
-    [data-page="order"] .card{
-      background:rgba(255,255,255,0.40);
-      border-color:rgba(229,231,235,0.45);
-      box-shadow:0 2px 10px rgba(0,0,0,0.06);
+
+    /* Frosted cards (matches Banquets/Shop look) */
+    body[data-page="order"] .card{
+      background: rgba(255,255,255,0.40);
+      border-color: rgba(229,231,235,0.45);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      backdrop-filter: saturate(120%) blur(2px);
+      -webkit-backdrop-filter: saturate(120%) blur(2px);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    body[data-page="order"] .card + .card{ margin-top:2rem; }
+
+    /* Inputs look tidy and consistent */
+    body[data-page="order"] label{
+      display:flex; flex-direction:column; gap:4px;
+      font-weight:600; font-size:.95rem; margin:0;
+    }
+    body[data-page="order"] input[type="text"],
+    body[data-page="order"] input[type="email"],
+    body[data-page="order"] input[type="tel"],
+    body[data-page="order"] input[type="number"]{
+      width:100%; padding:10px 12px; font-size:1rem;
+      border-radius:6px; border:1px solid rgba(0,0,0,.25);
+      background:rgba(255,255,255,.85);
+      box-shadow:0 1px 2px rgba(0,0,0,.05) inset;
+    }
+    body[data-page="order"] .grid-2,
+    body[data-page="order"] .grid-3{ gap:1rem; }
+
+    /* Attendees: compact like Purchaser */
+    body[data-page="order"] #attendee-list{ display:grid; gap:.75rem; }
+    body[data-page="order"] #attendee-list > *{
+      border:1px solid rgba(229,231,235,.55);
+      border-radius:10px;
+      padding:.75rem 1rem;
+      background:rgba(255,255,255,.35);
       backdrop-filter:saturate(120%) blur(2px);
       -webkit-backdrop-filter:saturate(120%) blur(2px);
     }
+    body[data-page="order"] #attendee-list h3,
+    body[data-page="order"] #attendee-list h4{
+      margin:0 0 .5rem 0; font-size:1rem; font-weight:800;
+    }
+    body[data-page="order"] #attendee-list label{ gap:4px; margin:0; }
+    body[data-page="order"] #attendee-list input[type="text"],
+    body[data-page="order"] #attendee-list input[type="email"],
+    body[data-page="order"] #attendee-list input[type="tel"],
+    body[data-page="order"] #attendee-list input[type="number"],
+    body[data-page="order"] #attendee-list select,
+    body[data-page="order"] #attendee-list textarea{
+      width:100%; padding:10px 12px; font-size:1rem;
+      border-radius:6px; border:1px solid rgba(0,0,0,.25);
+      background:rgba(255,255,255,.85);
+      box-shadow:0 1px 2px rgba(0,0,0,.05) inset;
+    }
+    body[data-page="order"] #attendee-list .grid-2,
+    body[data-page="order"] #attendee-list .grid-3{ gap:.75rem; }
+    body[data-page="order"] #attendee-list textarea{ min-height:80px; resize:vertical; }
+    body[data-page="order"] #attendee-list p,
+    body[data-page="order"] #attendee-list .row{ margin:0; }
   </style>
 </head>
 
+<!-- IMPORTANT: this flag must be present -->
 <body data-org="pa-2026" data-page="order">
   <header class="site-header">
     <div class="container header-inner">
