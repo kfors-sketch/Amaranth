@@ -119,7 +119,7 @@ nav a{ font-weight:500; }
 /* ===== Wallpaper: full image + edge-to-edge fill (two layers) ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.28;            /* clarity for the sharp layer */
+  --wallpaper-opacity: 0.38;            /* brighter sharp layer (was 0.28) */
   --wallpaper-position: center center;  /* tweak if needed */
 }
 
@@ -140,7 +140,7 @@ body::before{
 
   filter: blur(18px);
   transform: scale(1.08);               /* hide blur edges */
-  opacity: 0.14;                        /* subtle */
+  opacity: 0.10;                        /* a little lighter than before (was 0.14) */
 }
 
 /* Layer 2: sharp full image (no cropping) */
@@ -206,7 +206,7 @@ body[data-org="supreme-2027"]::after {
 
 /* Transparent banquet cards over wallpaper (more see-through) */
 [data-page="banquets"] .card{
-  background: rgba(255,255,255,0.40);   /* was 0.72 */
+  background: rgba(255,255,255,0.40);   /* more transparent */
   border-color: rgba(229,231,235,0.45); /* softer border */
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   backdrop-filter: saturate(120%) blur(2px);
@@ -215,11 +215,15 @@ body[data-org="supreme-2027"]::after {
   max-width: 360px;
 }
 
-/* Desktop: nudge banquet grid slightly left */
+/* Desktop: push banquet grid further left on wider screens */
 @media (min-width: 1024px) {
-  [data-page="banquets"] .grid-2{
-    transform: translateX(-30px); /* adjust -10 to -40px if desired */
-  }
+  [data-page="banquets"] .grid-2{ transform: translateX(-60px); }
+}
+@media (min-width: 1280px) {
+  [data-page="banquets"] .grid-2{ transform: translateX(-100px); }
+}
+@media (min-width: 1536px) {
+  [data-page="banquets"] .grid-2{ transform: translateX(-140px); }
 }
 
 /* Safety: ensure no nav separators appear */
