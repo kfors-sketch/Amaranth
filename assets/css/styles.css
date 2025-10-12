@@ -196,3 +196,22 @@ body[data-org="supreme-2027"]::after {
   margin:0 auto;
   color:#222;
 }
+
+/* ===== Banquets page tweaks ===== */
+[data-page="banquets"] .grid-2 {
+  justify-items: center;                 /* center each card in the grid */
+}
+
+/* Transparent banquet cards over wallpaper */
+[data-page="banquets"] .card {
+  background: rgba(255,255,255,0.72);    /* see-through white */
+  border-color: rgba(229,231,235,0.6);   /* softer border */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Safety: ensure no nav separators appear */
+.nav a + a::before { content: none !important; }
