@@ -45,7 +45,7 @@ nav a{ font-weight:500; }
   padding:.75rem 0;
 }
 
-/* Logo centered */
+/* Logo scales with viewport */
 .logo{
   display:flex;
   align-items:center;
@@ -53,7 +53,10 @@ nav a{ font-weight:500; }
   font-weight:700;
   margin:0 auto;
 }
-.logo img{width:32px;height:32px}
+.logo img{
+  width: clamp(36px, 3.2vw, 48px);
+  height: clamp(36px, 3.2vw, 48px);
+}
 
 /* ===== Layout helpers ===== */
 .container{width:min(1100px,92%);margin:0 auto}
@@ -70,11 +73,11 @@ nav a{ font-weight:500; }
 .hero{background:transparent !important;color:inherit}
 .hero-inner{padding:2.5rem 0}
 
-/* Session title */
+/* Session title already scales via clamp */
 .session-title{
   margin:0 0 .5rem 0;
   text-align:center;
-  font-size:clamp(1.25rem,2.5vw,2rem);
+  font-size:clamp(1.25rem, 2.5vw, 2rem);
   font-weight:800;
   color:#000;
   line-height:1.25;
@@ -138,7 +141,7 @@ body::before{
 
   filter: blur(18px);
   transform: scale(1.08);               /* avoid blur-edge halos */
-  opacity: 0.14;                         /* subtle background fill */
+  opacity: 0.14;                        /* subtle background fill */
 }
 
 /* Layer 2: sharp full image (no cropping) */
