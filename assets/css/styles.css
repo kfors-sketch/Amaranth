@@ -116,45 +116,67 @@ nav a{ font-weight:500; }
   background:#ecfdf5;
 }
 
-/* ===== Wallpaper (simple, reliable single-layer) ===== */
+/* ===== Wallpaper: full image + edge-to-edge fill (two layers) ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.28;
-  --wallpaper-position: center center;
+  --wallpaper-opacity: 0.28;            /* clarity for the sharp layer */
+  --wallpaper-position: center center;  /* tweak if needed */
 }
 
 body{ position: relative; }
+
+/* Layer 1: blurred "cover" to fill edges so no bars show */
 body::before{
   content:"";
-  position: fixed;                /* full viewport */
-  inset: 0;
-  z-index: 0;                     /* behind content */
-  pointer-events: none;
+  position:fixed;
+  inset:0;
+  z-index:0;                            /* behind content */
+  pointer-events:none;
 
   background-image: var(--wallpaper-url);
-  background-size: cover;         /* fills the screen */
+  background-size: cover;               /* fills entire viewport */
+  background-repeat: no-repeat;
+  background-position: var(--wallpaper-position);
+
+  filter: blur(18px);
+  transform: scale(1.08);               /* hide blur edges */
+  opacity: 0.14;                        /* subtle */
+}
+
+/* Layer 2: sharp full image (no cropping) */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;                            /* behind content */
+  pointer-events:none;
+
+  background-image: var(--wallpaper-url);
+  background-size: contain;             /* show 100% of image */
   background-repeat: no-repeat;
   background-position: var(--wallpaper-position);
   opacity: var(--wallpaper-opacity);
 }
 
-/* Ensure real content stays above the wallpaper */
+/* Ensure real content stays above both layers */
 .site-header, main, .site-footer, .container, .card, .nav, header, footer {
   position: relative;
   z-index: 1;
 }
 
 /* Per-org overrides (auto swap images) */
-body[data-org="pa-2026"]::before {
+body[data-org="pa-2026"]::before,
+body[data-org="pa-2026"]::after {
   background-image: url('/assets/img/pa-2026-watermark.jpg');
 }
-body[data-org="supreme-2027"]::before {
+body[data-org="supreme-2027"]::before,
+body[data-org="supreme-2027"]::after {
   background-image: url('/assets/img/supreme-2027-watermark.jpg');
 }
 
 /* Optional: mobile smoothness */
 @media (max-width: 768px) {
-  body::before { position: absolute; }
+  body::before, body::after { position: absolute; }
 }
 
 /* ===== New hero text styles ===== */
