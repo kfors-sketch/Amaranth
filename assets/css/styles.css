@@ -216,7 +216,7 @@ body[data-org="supreme-2027"]::after {
 }
 
 /* === Banquets: move LEFT by your measured amount === */
-:root { --banquets-shift-lg: -160px; }  /* negative = left */
+:root { --banquets-shift-lg: -190px; }  /* negative = left */
 
 @media (min-width: 1024px) {
   [data-page="banquets"] .grid-2{ transform: translateX(var(--banquets-shift-lg)) !important; }
