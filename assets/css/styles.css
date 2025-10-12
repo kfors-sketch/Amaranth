@@ -26,7 +26,7 @@ nav a{ font-weight:500; }
   position:sticky;
   top:0;
   background:transparent !important; /* let wallpaper show */
-  border-bottom:1px solid #e5e7eb;
+  border-bottom:0;                   /* removed line under header */
   z-index:10;
 }
 .header-inner{
@@ -109,7 +109,7 @@ nav a{ font-weight:500; }
 /* ===== Wallpaper layer ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.18;
+  --wallpaper-opacity: 0.28;     /* slightly clearer */
   --wallpaper-size: cover;
   --wallpaper-repeat: no-repeat;
   --wallpaper-position: center center;
@@ -119,15 +119,23 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-  z-index:0;                  /* wallpaper behind content */
+  z-index:0;                       /* wallpaper behind content */
   pointer-events:none;
   background-image: var(--wallpaper-url);
-  background-position: var(--wallpaper-position);
-  background-repeat: var(--wallpaper-repeat);
-  background-size: var(--wallpaper-size);
+  background-size: cover;          /* always cover screen */
+  background-repeat: no-repeat;    /* no tile */
+  background-position: center center;
+  background-attachment: fixed;    /* stable on desktop scroll */
+  image-rendering: auto;           /* clean scaling */
   opacity: var(--wallpaper-opacity);
-  background-color: rgba(0,0,0,0.06); /* faint tint */
 }
+/* Smooth behavior on mobile (workaround for fixed bug) */
+@media (max-width: 768px) {
+  body::before {
+    background-attachment: scroll; /* prevent jank on mobile */
+  }
+}
+
 /* Ensure all main content is above wallpaper */
 .site-header, main, .site-footer, .container, .card, .nav, header, footer {
   position: relative;
