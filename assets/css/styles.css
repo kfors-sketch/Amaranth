@@ -245,15 +245,16 @@ body.shop .nav a[href*="registration"],
 body.shop .nav a[href*="directory"] { display: none !important; }
 
 /* Stack & center the logo above the long title line */
-body.shop .header-inner { display:block; } /* ignore flex row stack edge cases */
+body.shop .header-inner { display:block; } /* avoid flex row issues */
 body.shop .logo{
   flex-direction: column;
   align-items: center;
   gap: 8px;
 }
+/* <<< Updated: make logo same small size as home/banquets >>> */
 body.shop .logo img{
-  width: clamp(90px, 12vw, 160px);
-  height: auto;
+  width: clamp(36px, 3.2vw, 48px);
+  height: clamp(36px, 3.2vw, 48px);
 }
 body.shop .logo span{
   text-align:center;
@@ -341,4 +342,21 @@ body.shop main h1{
   cursor:pointer;
   background:#fff;
   box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+
+/* <<< New overrides: make Shop cards match Banquet frosted style >>> */
+body.shop .item{
+  background: rgba(255,255,255,0.40);
+  border-color: rgba(229,231,235,0.45);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+}
+body.shop .item:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+}
+body.shop .item-name,
+body.shop .item-price{
+  color:#1f2937;
 }
