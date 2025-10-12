@@ -113,55 +113,68 @@ nav a{ font-weight:500; }
   background:#ecfdf5;
 }
 
-/* ===== Wallpaper: whole image on desktop, full-bleed on phones ===== */
+/* ===== Wallpaper: edge-to-edge fill + full image visible ===== */
 :root{
   --wallpaper-url: url('/assets/img/wallpaper.jpg');
-  --wallpaper-opacity: 0.28;           /* your chosen clarity */
-  --wallpaper-position: center center; /* desktop focal point */
+  --wallpaper-opacity: 0.28;            /* clarity for the sharp image */
+  --wallpaper-position: center center;  /* tweak if you want a different anchor */
 }
 
 html, body { min-height: 100vh; }
 body { position: relative; }
 
-/* Default = desktop/tablet: show the entire image (no cropping) */
+/* Layer 1: blurred cover to fill all edges (no white bars) */
 body::before{
   content:"";
-  position:fixed;                      /* pin to viewport */
-  inset:0;                             /* full screen */
-  z-index:0;                           /* behind content */
+  position:fixed;
+  inset:0;
+  z-index:0;
   pointer-events:none;
 
   background-image: var(--wallpaper-url);
-  background-size: contain;            /* show 100% of the image */
+  background-size: cover;               /* fills the screen */
   background-repeat: no-repeat;
   background-position: var(--wallpaper-position);
-  background-color:#fff;               /* letterbox fill to match page bg */
 
+  filter: blur(18px);
+  transform: scale(1.08);               /* avoid blur-edge halos */
+  opacity: 0.14;                         /* subtle background fill */
+}
+
+/* Layer 2: sharp full image (no cropping) */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;                             /* behind content */
+  pointer-events:none;
+
+  background-image: var(--wallpaper-url);
+  background-size: contain;              /* show 100% of the image */
+  background-repeat: no-repeat;
+  background-position: var(--wallpaper-position);
   opacity: var(--wallpaper-opacity);
 }
 
-/* Phones: fill the screen edge-to-edge (may crop slightly) */
-@media (max-width: 768px) {
-  body::before{
-    background-size: cover;            /* fill */
-    background-position: center 45%;   /* tweak focal point for mobile */
-    background-color: transparent;     /* no visible bars on phones */
-    position: absolute;                /* smoother mobile scrolling */
-  }
-}
-
-/* Keep site content above wallpaper */
+/* Keep site content above both layers */
 .site-header, main, .site-footer, .container, .card, .nav, header, footer {
   position: relative;
   z-index: 1;
 }
 
-/* Per-site overrides */
-body[data-org="pa-2026"]::before {
+/* Swap to per-site images automatically */
+body[data-org="pa-2026"]::before,
+body[data-org="pa-2026"]::after {
   background-image: url('/assets/img/pa-2026-watermark.jpg');
 }
-body[data-org="supreme-2027"]::before {
+body[data-org="supreme-2027"]::before,
+body[data-org="supreme-2027"]::after {
   background-image: url('/assets/img/supreme-2027-watermark.jpg');
+}
+
+/* Mobile performance: reduce jank on some browsers */
+@media (max-width: 768px) {
+  body::before, body::after { position: absolute; }
 }
 
 /* ===== New hero text styles ===== */
