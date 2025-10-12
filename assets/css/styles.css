@@ -429,3 +429,83 @@ body.shop .item-price{
   border-bottom: 1px solid rgba(0,0,0,0.15);
   padding-bottom: 6px;
 }
+/* ===== Order: make Attendee blocks match Purchaser (compact + first row 3-up) ===== */
+[data-page="order"] #attendee-list > *{
+  /* turn each attendee card into a tidy grid */
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(180px, 1fr);
+  gap: 0.75rem 1rem;
+  align-items: start;
+
+  /* compact visual like Purchaser */
+  border: 1px solid rgba(229,231,235,0.55);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+}
+
+/* Attendee heading spans full width */
+[data-page="order"] #attendee-list > * h3,
+[data-page="order"] #attendee-list > * h4{
+  grid-column: 1 / -1;
+  margin: 0 0 .4rem 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Clean labels/inputs */
+[data-page="order"] #attendee-list > * label{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+[data-page="order"] #attendee-list > * input[type="text"],
+[data-page="order"] #attendee-list > * input[type="email"],
+[data-page="order"] #attendee-list > * input[type="tel"],
+[data-page="order"] #attendee-list > * input[type="number"],
+[data-page="order"] #attendee-list > * select,
+[data-page="order"] #attendee-list > * textarea{
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05) inset;
+}
+
+/* Put Full name, Email, Title on the first row (robust selectors) */
+[data-page="order"] #attendee-list > * label:has(input[id*="name" i])   { grid-column: 1; }
+[data-page="order"] #attendee-list > * label:has(input[id*="email" i])  { grid-column: 2; }
+[data-page="order"] #attendee-list > * label:has(input[id*="title" i]),
+[data-page="order"] #attendee-list > * label:has(select[id*="title" i]) { grid-column: 3; }
+
+/* Tighter internal grids if your generator nests them */
+[data-page="order"] #attendee-list > * .grid-2,
+[data-page="order"] #attendee-list > * .grid-3{
+  gap: 0.75rem 1rem !important;
+}
+
+/* Smaller default textarea */
+[data-page="order"] #attendee-list > * textarea{
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Mobile: stack nicely */
+@media (max-width: 800px){
+  [data-page="order"] #attendee-list > *{
+    grid-template-columns: 1fr;
+  }
+  [data-page="order"] #attendee-list > * label:has(input[id*="name" i]),
+  [data-page="order"] #attendee-list > * label:has(input[id*="email" i]),
+  [data-page="order"] #attendee-list > * label:has(input[id*="title" i]),
+  [data-page="order"] #attendee-list > * label:has(select[id*="title" i]){
+    grid-column: 1 !important;
+  }
+}
