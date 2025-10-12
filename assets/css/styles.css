@@ -444,3 +444,70 @@ body.shop .item-price{
   border-bottom: 1px solid rgba(0,0,0,0.15);
   padding-bottom: 6px;
 }
+
+/* ===== Order page: tighten Attendee blocks to match Purchaser ===== */
+[data-page="order"] #attendee-list{
+  display: grid;
+  gap: 0.75rem; /* space between attendee blocks */
+}
+
+/* Each attendee block: compact padding + subtle frosted background */
+[data-page="order"] #attendee-list > *{
+  border: 1px solid rgba(229,231,235,0.55);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;              /* smaller than section .card to reduce height */
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+}
+
+/* Attendee headings (e.g., "Attendee 1") */
+[data-page="order"] #attendee-list h3,
+[data-page="order"] #attendee-list h4{
+  margin: 0 0 .5rem 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Labels + inputs inside attendee blocks — tidy & consistent */
+[data-page="order"] #attendee-list label{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0; /* remove stray label margins */
+}
+
+[data-page="order"] #attendee-list input[type="text"],
+[data-page="order"] #attendee-list input[type="email"],
+[data-page="order"] #attendee-list input[type="tel"],
+[data-page="order"] #attendee-list input[type="number"],
+[data-page="order"] #attendee-list select,
+[data-page="order"] #attendee-list textarea{
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05) inset;
+}
+
+/* Tighter row gaps inside attendee grids */
+[data-page="order"] #attendee-list .grid-2,
+[data-page="order"] #attendee-list .grid-3{
+  gap: 0.75rem;
+}
+
+/* Smaller default textarea height (if present) */
+[data-page="order"] #attendee-list textarea{
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Kill stray margins that add height */
+[data-page="order"] #attendee-list p,
+[data-page="order"] #attendee-list .row{
+  margin: 0;
+}
