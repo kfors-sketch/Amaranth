@@ -7,11 +7,18 @@ a{color:black;text-decoration:none}   /* changed from blue to black */
 a:hover{text-decoration:underline}
 a:visited{color:black}                /* keeps links black even after clicking */
 
-/* Navigation links spacing */
-nav a {
-  margin-right: 18px;                 /* spacing between links */
-  font-weight: 500;
+/* Navigation container & links spacing */
+.nav{
+  display:flex;
+  flex-wrap:wrap;         /* wraps on small screens */
+  align-items:center;
+  gap:18px;               /* spacing between links */
 }
+nav a{
+  font-weight:500;
+}
+/* Permanently hide hamburger */
+.nav-toggle{ display:none !important; }
 
 /* Container + layout stuff */
 .container{width:min(1100px,92%);margin:0 auto}
