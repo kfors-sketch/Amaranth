@@ -215,17 +215,17 @@ body[data-org="supreme-2027"]::after {
   max-width: 360px;
 }
 
-/* === Banquets: apply your measured right shift (108px) === */
-:root { --banquets-shift-lg: 108px; }   /* from DevTools measurement */
+/* === Banquets: move LEFT by your measured amount === */
+:root { --banquets-shift-lg: -108px; }  /* negative = left */
 
 @media (min-width: 1024px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(var(--banquets-shift-lg)); }
+  [data-page="banquets"] .grid-2{ transform: translateX(var(--banquets-shift-lg)) !important; }
 }
 @media (min-width: 1280px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) + 32px)); }
+  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) - 32px)) !important; }
 }
 @media (min-width: 1536px) {
-  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) + 64px)); }
+  [data-page="banquets"] .grid-2{ transform: translateX(calc(var(--banquets-shift-lg) - 64px)) !important; }
 }
 
 /* Safety: ensure no nav separators appear */
