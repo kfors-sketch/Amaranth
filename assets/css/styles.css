@@ -386,3 +386,46 @@ body.shop .item-price{
   backdrop-filter: saturate(120%) blur(2px);
   -webkit-backdrop-filter: saturate(120%) blur(2px);
 }
+
+/* ===== Order page layout improvements (Spacing: B, Inputs: 2) ===== */
+[data-page="order"] main {
+  margin-top: 3rem; /* Medium spacing from header */
+}
+
+/* Neat, consistent label + inputs */
+[data-page="order"] label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.95rem;
+  gap: 4px;
+}
+
+/* Professional input style overrides just for Order page */
+[data-page="order"] input[type="text"],
+[data-page="order"] input[type="email"],
+[data-page="order"] input[type="tel"],
+[data-page="order"] input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05) inset;
+}
+
+/* Improve spacing of grid rows within Order forms */
+[data-page="order"] .grid-2,
+[data-page="order"] .grid-3 {
+  gap: 1rem;
+}
+
+/* Make section headers stand out a touch */
+[data-page="order"] h2 {
+  margin-top: 0;
+  font-weight: 800;
+  font-size: 1.1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+  padding-bottom: 6px;
+}
