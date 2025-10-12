@@ -63,4 +63,135 @@ nav a{ font-weight:500; }
 .mt{margin-top:1rem}
 .mt-lg{margin-top:2rem}
 .btn{display:inline-block;padding:.7rem 1rem;border-radius:.5rem;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer}
-.btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed
+.btn-primary{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.card{border:1px solid #e5e7eb;border-radius:.75rem;padding:1rem;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+@media(max-width:800px){.grid-3,.grid-2{grid-template-columns:1fr}}
+
+/* ===== Hero (transparent over wallpaper) ===== */
+.hero{background:transparent !important;color:inherit}
+.hero-inner{padding:2.5rem 0}
+
+/* Session title already scales via clamp */
+.session-title{
+  margin:0 0 .5rem 0;
+  text-align:center;
+  font-size:clamp(1.25rem, 2.5vw, 2rem);
+  font-weight:800;
+  color:#000;
+  line-height:1.25;
+}
+
+/* ===== Misc text ===== */
+.price{font-weight:700}
+.tiny{font-size:.875rem;color:#6b7280;padding:1rem 0}
+.form label{display:block;margin-bottom:.75rem}
+.form input,.form select,.form textarea{width:100%;padding:.7rem;border-radius:.5rem;border:1px solid #d1d5db}
+
+/* ===== Per-attendee registration callout ===== */
+.reg-box{
+  border:2px solid #2563eb;
+  background:#eff6ff;
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.reg-box .price-chip{
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:9999px;
+  font-weight:700;
+  font-size:.85rem;
+  background:#1d4ed8;
+  color:#fff;
+  margin-left:.5rem;
+}
+.reg-box .hint{ font-size:.85rem; color:#475569; }
+.reg-box .title{ font-weight:800; }
+.reg-box.active{
+  border-color:#16a34a;
+  background:#ecfdf5;
+}
+
+/* ===== Wallpaper (simple, reliable single-layer) ===== */
+:root{
+  --wallpaper-url: url('/assets/img/wallpaper.jpg');
+  --wallpaper-opacity: 0.28;
+  --wallpaper-position: center center;
+}
+
+body{ position: relative; }
+body::before{
+  content:"";
+  position: fixed;                /* full viewport */
+  inset: 0;
+  z-index: 0;                     /* behind content */
+  pointer-events: none;
+
+  background-image: var(--wallpaper-url);
+  background-size: cover;         /* fills the screen */
+  background-repeat: no-repeat;
+  background-position: var(--wallpaper-position);
+  opacity: var(--wallpaper-opacity);
+}
+
+/* Ensure real content stays above the wallpaper */
+.site-header, main, .site-footer, .container, .card, .nav, header, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-org overrides (auto swap images) */
+body[data-org="pa-2026"]::before {
+  background-image: url('/assets/img/pa-2026-watermark.jpg');
+}
+body[data-org="supreme-2027"]::before {
+  background-image: url('/assets/img/supreme-2027-watermark.jpg');
+}
+
+/* Optional: mobile smoothness */
+@media (max-width: 768px) {
+  body::before { position: absolute; }
+}
+
+/* ===== New hero text styles ===== */
+.welcome-text{
+  text-align:center;
+  font-size:2rem;
+  margin-top:1rem;
+  margin-bottom:1rem;
+  font-weight:700;
+  color:black;
+}
+.org-intro{
+  text-align:center;
+  font-size:1rem;
+  max-width:700px;
+  margin:0 auto;
+  color:#222;
+}
+
+/* ===== Banquets page: center ONLY the banquet cards ===== */
+[data-page="banquets"] .grid-2{
+  display: grid;             /* ensure grid context */
+  justify-content: center;   /* center grid tracks */
+  justify-items: center;     /* center each card */
+  gap: 1.25rem;
+}
+
+/* Transparent banquet cards over wallpaper (kept) */
+[data-page="banquets"] .card{
+  background: rgba(255,255,255,0.72);
+  border-color: rgba(229,231,235,0.6);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  backdrop-filter: saturate(120%) blur(2px);
+  -webkit-backdrop-filter: saturate(120%) blur(2px);
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Safety: ensure no nav separators appear */
+.nav a + a::before { content: none !important; }
